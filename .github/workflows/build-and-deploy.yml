@@ -133,6 +133,7 @@ jobs:
         shell: bash
         env:
           GPGKEY: ${{secrets.GPGKEY}}
+          FALLBACK_ARCHITECTURE: ${{github.event.inputs.architecture}}
           PACMANDRYRUN: ${{github.event.inputs.build_only}}
         run: /usr/src/build-extra/pacman-helper.sh quick_add artifacts/*
       - name: Clean up temporary files
