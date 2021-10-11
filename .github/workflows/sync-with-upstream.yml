@@ -1,0 +1,46 @@
+name: Sync packages with upstream
+
+# Git for Windows is a slightly modified subset of MSYS2. Some of its
+# components are maintained by Git for Windows, others by MSYS2. Since 
+# Git for Windows currently needs i686 versions of some packages maintained
+# by MSYS2 and they don't build them for that architecture, this workflow
+# monitors their git repository and opens new pull requests for updated packages.
+ 
+on:
+  schedule:
+    - cron: "13 17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  syncPackages:
+    strategy:
+      matrix:
+        package: [asciidoc]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check for upstream changes
+        run: |
+          git remote add upstream https://github.com/msys2/MSYS2-Packages.git
+          git fetch upstream master
+          msys_pkgver="$(git grep -h 'pkgver=' upstream/master -- ${{ matrix.package }}/PKGBUILD)"
+          msys_pkgrel="$(git grep -h 'pkgrel=' upstream/master -- ${{ matrix.package }}/PKGBUILD)"
+          our_pkgver="$(git grep -h 'pkgver=' sync-with-upstream -- ${{ matrix.package }}/PKGBUILD)"
+          our_pkgrel="$(git grep -h 'pkgrel=' sync-with-upstream -- ${{ matrix.package }}/PKGBUILD)"
+          if [ $msys_pkgver != $our_pkgver ] || [ $msys_pkgrel != $our_pkgrel ]
+            then
+              git checkout upstream/master -- ${{ matrix.package }}/*
+          fi
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: ${{ matrix.package }}
+          title: "${{ matrix.package }}: sync with upstream"
+          body: Update ${{ matrix.package }} to MSYS2's version.
+          commit-message: "${{ matrix.package }}: synchronize with MSYS2's version"
+          signoff: true
+          committer: Git for Windows Build Agent <ci@git-for-windows.build> 
