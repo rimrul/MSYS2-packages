@@ -69,12 +69,12 @@ jobs:
       - name: pacman -Syyu
         shell: bash
         run: pacman -Syyu --noconfirm
-      - name: Get GPG keys (if necessary)
+      - name: Get GPG key(s)
         shell: bash
         run: |
           cd "/usr/src/MSYS2-packages/${{github.event.inputs.package}}" &&
           . PKGBUILD &&
-          for key in "${validpgpkeys[@]}"
+          for key in "${validpgpkeys[@]}" 57759F748D223F034D8BE870BB3AA74136C569BB
           do
             gpg $GPG_OPTIONS --recv-keys --batch --yes --keyserver "$key" &&
             echo "$key:6:" | gpg $GPG_OPTIONS --import-ownertrust ||
