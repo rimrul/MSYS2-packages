@@ -124,7 +124,7 @@ jobs:
           name: artifacts
           path: artifacts
       - name: Prepare home directory for deploying to the Pacman repository
-        if: github.event.inputs.build_only != '' && env.AZURE_BLOBS_TOKEN != ''
+        if: github.event.inputs.build_only != 'true' && env.AZURE_BLOBS_TOKEN != ''
         env:
           AZURE_BLOBS_TOKEN: ${{secrets.AZURE_BLOBS_TOKEN}}
         shell: bash
