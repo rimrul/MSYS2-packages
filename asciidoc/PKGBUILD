@@ -1,14 +1,13 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=asciidoc
-pkgver=8.6.10
+pkgver=9.1.1
 pkgrel=1
 pkgdesc='Text document format for short documents, articles, books and UNIX man pages.'
 arch=('any')
-url='http://www.methods.co.nz/asciidoc/'
+url='https://asciidoc.org/'
 license=('GPL')
-depends=('python2' 'libxslt' 'docbook-xsl')
-makedepends=('tar')
+depends=('python' 'libxslt' 'docbook-xsl')
 groups=('base-devel')
 # optdepends=('lilypond: music-filter'
             # 'imagemagick: music-filter (used in conjunction with lilypond)'
@@ -17,46 +16,35 @@ groups=('base-devel')
             # 'fop: alternative pdf generation'
             # 'lynx: text generation'
             # 'w3m: text generation (alternative to lynx)')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/asciidoc/asciidoc/archive/${pkgver}.tar.gz"
+source=("https://github.com/asciidoc/asciidoc-py3/releases/download/${pkgver}/${pkgname}-${pkgver}.tar.gz"
         0001-W32-confdir.msys2.patch)
-noextract=("${pkgname}-${pkgver}.tar.gz")
-sha256sums=('9e52f8578d891beaef25730a92a6e723596ddbd07bfe0d2a56486fcf63a0b983'
+sha256sums=('ea39760ac2739496c14002902571592dc2ae2fa673296ec141a9e491d9c11fca'
             '71f44b513f627b133afead38576fcb8a5460d0514174a4ce219c6ea761d8b40c')
 
 prepare() {
-  tar -xzvf ${pkgname}-${pkgver}.tar.gz --recursive-unlink
-
-  cd ${pkgname}-${pkgver}
-
+  cd "${srcdir}/${pkgname}-${pkgver}"
   patch -p1 -i ${srcdir}/0001-W32-confdir.msys2.patch
-
-  # python2 fix
-  for file in asciidocapi.py a2x.py asciidoc.py filters/music/music2png.py filters/latex/latex2img.py \
-    filters/code/code-filter.py filters/graphviz/graphviz2png.py; do
-  sed -i 's_#!/usr/bin/env python2_#!/usr/bin/python2_' $file
-  done
-
-  sed -i -e 's#python a2x.py#python2 a2x.py#' Makefile.in
 }
 
 build() {
-  cd ${pkgname}-${pkgver}
+  cd "${srcdir}/${pkgname}-${pkgver}"
 
   autoreconf -fi
 
   ./configure \
     --prefix=/usr \
     --sysconfdir=/etc
+
+  make
 }
 
 package() {
-  cd ${pkgname}-${pkgver}
+  cd "${srcdir}/${pkgname}-${pkgver}"
 
   make install DESTDIR=${pkgdir}
 
-  install -Dm644 asciidocapi.py \
-    ${pkgdir}/usr/lib/python2.7/site-packages/asciidocapi.py
+  local _pyver=$(/usr/bin/python -c "import sys;sys.stdout.write('.'.join(map(str, sys.version_info[:2])))")
 
-  install -Dm644 vim/syntax/asciidoc.vim \
-    ${pkgdir}/usr/share/vim/vimfiles/syntax/asciidoc.vim
+  install -Dm644 asciidocapi.py \
+    ${pkgdir}/usr/lib/python${_pyver}/site-packages/asciidocapi.py
 }
