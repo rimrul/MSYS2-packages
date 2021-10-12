@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.1.7
-pkgrel=5
+pkgrel=6
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -95,7 +95,10 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0068-Allow-executing-Windows-Store-s-app-execution-aliase.patch
         0069-Cygwin-winlean.h-remove-most-of-the-extended-memory-.patch
         0070-Work-around-old-mingw-w64-headers-in-the-i686-flavor.patch
-        0071-fixup-Work-around-old-mingw-w64-headers-in-the-i686-.patch)
+        0071-fixup-Work-around-old-mingw-w64-headers-in-the-i686-.patch
+        0072-Cygwin-Add-missing-IsWow64Process2-declaration.patch
+        0073-Cygwin-suppress-FAST_CWD-warnings-on-ARM64.patch
+        0074-fixup-Work-around-old-mingw-w64-headers-in-the-i686-.patch)
 sha256sums=('SKIP'
             'e02e924abdc3e3a9d5185a3b9024ee5c24c1589e2ad886abef2b42d5ac4297d5'
             'afa0444b7e6076826135b4113982602e89927a2cee8b591981bd916043fdaa18'
@@ -167,7 +170,10 @@ sha256sums=('SKIP'
             'cf716c266f2b32377ffa5942920434407de7523e82f204c8da4f051e45262385'
             'fb9873282ff8d3283bdd065f2de7411f1c0fcebb80c9a3e00c393c3e602606f3'
             '163a543aedc2d97ff05bb7dabc407ec4bdaeb5d9a620dc1caff9bd1ed1ab4202'
-            '34021a7d3fcfc7d5b5785162abaa65a201497b22003fef04e847fa1ed9fd9ed2')
+            '34021a7d3fcfc7d5b5785162abaa65a201497b22003fef04e847fa1ed9fd9ed2'
+            '17f05ca42da63ae5b0a1c5fa668f1553cbb2ab302b40f348e88dff8674422af1'
+            '8287a12ae2dfb18021d8ed69d6f80ebcae529735cc4d9add056f75cf26a8f271'
+            '5da6bedeb3ad20c3b95905f0645a78d4662602e67466bc94cc4cfa4540ca358e')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -265,6 +271,9 @@ prepare() {
   git am --committer-date-is-author-date "${srcdir}"/0069-Cygwin-winlean.h-remove-most-of-the-extended-memory-.patch
   git am --committer-date-is-author-date "${srcdir}"/0070-Work-around-old-mingw-w64-headers-in-the-i686-flavor.patch
   git am --committer-date-is-author-date "${srcdir}"/0071-fixup-Work-around-old-mingw-w64-headers-in-the-i686-.patch
+  git am --committer-date-is-author-date "${srcdir}"/0072-Cygwin-Add-missing-IsWow64Process2-declaration.patch
+  git am --committer-date-is-author-date "${srcdir}"/0073-Cygwin-suppress-FAST_CWD-warnings-on-ARM64.patch
+  git am --committer-date-is-author-date "${srcdir}"/0074-fixup-Work-around-old-mingw-w64-headers-in-the-i686-.patch
 }
 
 build() {
