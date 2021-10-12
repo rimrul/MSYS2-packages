@@ -19,7 +19,7 @@ jobs:
   syncPackages:
     strategy:
       matrix:
-        package: [asciidoc]
+        package: [ca-certificates, coreutils, less, nano, p11-kit, vim]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
