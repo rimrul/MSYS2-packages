@@ -33,7 +33,8 @@ jobs:
           our_pkgrel="$(git grep -h 'pkgrel=' sync-with-upstream -- ${{ matrix.package }}/PKGBUILD)"
           if [ $msys_pkgver != $our_pkgver ] || [ $msys_pkgrel != $our_pkgrel ]
             then
-              git checkout upstream/master -- ${{ matrix.package }}/*
+              rm ${{ matrix.package }}/*
+              git checkout upstream/master -- "${{ matrix.package }}/*"
           fi
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
