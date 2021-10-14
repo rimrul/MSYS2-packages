@@ -36,10 +36,11 @@ jobs:
               rm ${{ matrix.package }}/*
               git checkout upstream/master -- "${{ matrix.package }}/*"
           fi
+          echo new_version=$msys_pkgver-$msys_pkgrel >> GITHUB_ENV
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          branch: ${{ matrix.package }}-$msys_pkgver-$msys_pkgrel
+          branch: ${{ matrix.package }}-${{ env.new_version }}
           title: "${{ matrix.package }}: sync with upstream"
           body: Update ${{ matrix.package }} to MSYS2's version.
           commit-message: "${{ matrix.package }}: synchronize with MSYS2's version"
