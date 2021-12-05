@@ -248,6 +248,8 @@ build() {
   CFLAGS="$OPTIM -pipe -ggdb -Wno-error=deprecated -Wno-error=stringop-truncation -Wno-error=missing-attributes -Wno-error=maybe-uninitialized" #-Wno-error=class-memaccess
   CXXFLAGS="$OPTIM -pipe -ggdb -Wno-error=deprecated -Wno-error=stringop-truncation -Wno-error=missing-attributes -Wno-error=maybe-uninitialized" #-Wno-error=class-memaccess
 
+  (cd "${srcdir}/msys2-runtime/winsup" && ./autogen.sh)
+
   "${srcdir}"/msys2-runtime/configure \
     --prefix=/usr \
     --build=${CHOST} \
