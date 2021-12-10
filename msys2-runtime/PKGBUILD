@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.3.3
-pkgrel=1
+pkgrel=2
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -83,7 +83,9 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0056-Make-paths-WCS-MBS-conversion-explicit.patch
         0057-Handle-ORIGINAL_PATH-just-like-PATH.patch
         0058-Use-MB_CUR_MAX-6-by-default.patch
-        0059-Do-not-try-to-sync-with-Cygwin.patch)
+        0059-Do-not-try-to-sync-with-Cygwin.patch
+        0060-fixup-Rename-dll-from-cygwin-to-msys.patch
+        0061-Cygwin-pty-fix-bug-in-reduced-input-transfer.patch)
 sha256sums=('SKIP'
             '59c53c74c5c0e6f8d0020eb2d4b7ea69e29f0682b985185fac07c3a90966c88b'
             '97240278790878f2ca238c64c025eab710281b765a71009c619b663ca120ffad'
@@ -143,7 +145,9 @@ sha256sums=('SKIP'
             '84380e1ebe5e8659e258a45388eb6c9b0a31f87aefac6dcc1c385cda5ad11619'
             '693610fbe321a26f7b2f9dc1db41fb90f748f383b1f7922e4a43cededc39e0aa'
             'fafd2acb54add9f7e30487d68b949cf5b00f14a431dfb7408a329d6bc988b992'
-            'ac3ff8bcb2202f7c5af9f7a3494ca1c511f8513bbfd2f5a60bad0b5329a26b58')
+            'ac3ff8bcb2202f7c5af9f7a3494ca1c511f8513bbfd2f5a60bad0b5329a26b58'
+            '54ce740f32d58a44d648951fcc03d8262e09156892f68ce015d69ca9c92ee4ca'
+            '88907b250597779d982af8bf1ee88cde3fc0a4a78dbaa59f74edfee6b574daff')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -229,6 +233,8 @@ prepare() {
   git am --committer-date-is-author-date "${srcdir}"/0057-Handle-ORIGINAL_PATH-just-like-PATH.patch
   git am --committer-date-is-author-date "${srcdir}"/0058-Use-MB_CUR_MAX-6-by-default.patch
   git am --committer-date-is-author-date "${srcdir}"/0059-Do-not-try-to-sync-with-Cygwin.patch
+  git am --committer-date-is-author-date "${srcdir}"/0060-fixup-Rename-dll-from-cygwin-to-msys.patch
+  git am --committer-date-is-author-date "${srcdir}"/0061-Cygwin-pty-fix-bug-in-reduced-input-transfer.patch
 }
 
 build() {
