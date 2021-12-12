@@ -1,41 +1,34 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=coreutils
-pkgver=8.26
-pkgrel=3
+pkgver=8.32
+pkgrel=2
 pkgdesc="The basic file, shell and text manipulation utilities of the GNU operating system"
 arch=('i686' 'x86_64')
 license=('GPL3')
 url="https://www.gnu.org/software/coreutils"
-groups=('base')
 depends=('gmp' 'libiconv' 'libintl')
-makedepends=('gmp-devel' 'libiconv-devel' 'gettext-devel' 'help2man')
+makedepends=('gmp-devel' 'libiconv-devel' 'gettext-devel' 'help2man' 'autotools')
 install=${pkgname}.install
 source=(https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz{,.sig}
-        001-coreutils-8.26-2.src.patch
-        005-manifest.patch
-        006-msys1-0x0d.patch
-        008-msys2-src.patch
-        009-msysize.patch)
-sha256sums=('155e94d748f8e2bc327c66e0cbebdb8d6ab265d2f37c3c928f7bf6c3beba9a8e'
+        001-coreutils-8.30.patch
+        002-coreutils-8.32-enable-stdbuf.patch
+        003-coreutils-8.32-fix-test-cases.patch)
+sha256sums=('4458d8de7849df44ccab15e16b1548b285224dbba5f08fac070c1c0e0bcc4cfa'
             'SKIP'
-            'd9c159ed688c4399f1d952bef1d3cae7a23653a77d187e5dc788fe33c1b5816f'
-            '22e73cf22f784657fae6161cc9538b2f0cd4043800df56c9f6b9aec4ec0a69ce'
-            'dc501c52267f99cfd81bc00aa31b624183b189638feb43b54b326b62e52fc62a'
-            'e411e3c8d202bab8c171082494ad6511dc8642933b367539e2f3006af0a67f7e'
-            '46d30e057c86ff6448fee4b1664a9d8914d56d7efbfd97276212490a03926704')
+            '467bde24da0ccea48260f58d3c94a84de4e027ab598a926003642f791da47ca2'
+            'e3be62b9aceb3231f09f05bc3bd8b18f6aaa495f5063781cdd261d560a7e80d0'
+            'ad9e0582373500c0668e38483401169f48d6a2f8ad8d28ef8e7b06e4a3e08a74')
+validpgpkeys=('6C37DC12121A5006BC1DB804DF6FD971306037D9')
 
 prepare() {
   cd ${srcdir}/${pkgname}-${pkgver}
 
-  patch -p2 -i ${srcdir}/001-coreutils-8.26-2.src.patch
-  patch -p1 -i ${srcdir}/005-manifest.patch
-  patch -p1 -i ${srcdir}/006-msys1-0x0d.patch
-  patch -p1 -i ${srcdir}/008-msys2-src.patch
-  patch -p1 -i ${srcdir}/009-msysize.patch
+  patch -p1 -i ${srcdir}/001-coreutils-8.30.patch
+  patch -p1 -i ${srcdir}/002-coreutils-8.32-enable-stdbuf.patch
+  patch -p1 -i ${srcdir}/003-coreutils-8.32-fix-test-cases.patch
 
   autoreconf -fi
-  sed -i -e 's|\(libstdbuf\.so\)$(EXEEXT)|\1|g' Makefile.in
 }
 
 build() {
@@ -52,9 +45,16 @@ build() {
     --without-libintl-prefix \
     --without-libiconv-prefix \
     --enable-install-program=arch,hostname \
-    --enable-no-install-program=uptime
+    --enable-no-install-program=uptime \
+    gl_cv_func_strtod_works=yes \
+    gl_cv_func_strtold_works=yes
 
   make
+}
+
+check() {
+  cd ${srcdir}/build-${CHOST}
+  make check
 }
 
 package() {
@@ -63,8 +63,7 @@ package() {
 
   test ! -f ${pkgdir}/usr/lib/coreutils/libstdbuf.so.exe ||
   mv ${pkgdir}/usr/lib/coreutils/libstdbuf.so.exe \
-    ${pkgdir}/usr/lib/coreutils/libstdbuf.so
+    ${pkgdir}/usr/lib/coreutils/libstdbuf.dll
 
-  #mkdir -p ${pkgdir}/usr/etc
   install -Dm644 ${srcdir}/${pkgname}-${pkgver}/src/dircolors.hin ${pkgdir}/etc/DIR_COLORS
 }
