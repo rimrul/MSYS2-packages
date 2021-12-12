@@ -1,7 +1,7 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=nano
-pkgver=2.9.8
+pkgver=5.9
 pkgrel=1
 pkgdesc="Pico editor clone with enhancements"
 arch=('i686' 'x86_64')
@@ -9,24 +9,24 @@ license=('GPL')
 url="https://www.nano-editor.org"
 groups=('editors')
 depends=('file' 'libintl' 'ncurses' 'sh')
-makedepends=('make'
-             'automake-wrapper'
+makedepends=('autotools'
              'ncurses-devel'
              'libiconv-devel'
              'gettext-devel')
 backup=('etc/nanorc')
 install=nano.install
-source=(https://www.nano-editor.org/dist/v${pkgver%.*}/${pkgname}-${pkgver}.tar.xz{,.asc}
+source=(https://www.nano-editor.org/dist/v5/${pkgname}-${pkgver}.tar.xz{,.asc}
         2.2.4-wchar.patch
         nano-2.3.4-fix-ncurses-location.patch
         nano-2.8.0-msys2.patch)
-sha256sums=('c2deac31ba4d3fd27a42fafcc47ccf499296cc69a422bbecab63f2933ea85488'
+sha256sums=('757db8cda4bb2873599e47783af463e3b547a627b0cabb30ea7bf71fb4c24937'
             'SKIP'
-            '60ea17cdaf6ce0dbcf7e21b592e54aa829b34d9aab95a7ad20ddce569605c3d4'
+            '021d6bba4d45068b6d24aefdaed5044675f05b01430b68d27721f90d5ea6f5d3'
             '62b0e50470254ed09e55c068b29b72fe784d0552f97fbc5a15b6ee791c9cbd72'
-            '6f125a7cfcc956d57fae4e1be765666c86804bee806bb8c32b092d98310e6e32')
+            '5566700bbd3e8e157869d76086c731169d3352adb345fe9c3be48762b36a174e')
 validpgpkeys=('8DA6FE7BFA7A418AB3CB2354BCB356DF91009FA7' # "Chris Allegretta <chrisa@asty.org>"
               'A7F6A64A67DA09EF92782DD79DF4862AF1175C5B' # "Benno Schulenberg <bensberg@justemail.net>"
+              'BFD009061E535052AD0DF2150D28D4D2A0ACE884' # "Benno Schulenberg <bensberg@telfort.nl>"
 )
 
 prepare() {
@@ -37,6 +37,8 @@ prepare() {
   patch -p1 -i ${srcdir}/nano-2.3.4-fix-ncurses-location.patch
   msg2 "nano-2.8.0-msys2.patch"
   patch -p1 -i ${srcdir}/nano-2.8.0-msys2.patch
+
+  autoreconf -fiv
 }
 
 build() {
@@ -45,7 +47,6 @@ build() {
     --prefix=/usr \
     --sysconfdir=/etc \
     --enable-color \
-    --without-slang \
     --enable-nanorc \
     --enable-utf8 \
     CFLAGS="${CFLAGS} -I/usr/include/ncursesw" \
