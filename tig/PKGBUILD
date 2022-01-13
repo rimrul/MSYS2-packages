@@ -1,7 +1,7 @@
 # Maintainer: Alexey Pavlov <Alexpux@gmail.com>
 
 pkgname=tig
-pkgver=2.5.4
+pkgver=2.5.5
 pkgrel=1
 pkgdesc='Text-mode interface for Git'
 depends=('git' 'libreadline' 'ncurses')
@@ -10,7 +10,7 @@ url='http://jonas.nitro.dk/tig/'
 license=('GPL')
 arch=('i686' 'x86_64')
 source=("https://github.com/jonas/${pkgname}/releases/download/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.gz")
-sha256sums=('c48284d30287a6365f8a4750eb0b122e78689a1aef8ce1d2961b6843ac246aa7')
+sha256sums=('24ba2c8beae889e6002ea7ced0e29851dee57c27fde8480fb9c64d5eb8765313')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
