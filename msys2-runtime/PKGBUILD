@@ -262,6 +262,14 @@ build() {
     --sysconfdir=/etc \
     "${extra_config[@]}"
   LC_ALL=C make
+
+  if test -n "$SIGNTOOL"
+  then
+    eval "$SIGNTOOL" \
+      ${PWD}/${CHOST}/winsup/cygwin/msys0.dll \
+      ${PWD}/${CHOST}/winsup/utils/*.exe
+  fi
+
   LC_ALL=C make -j1 DESTDIR="${srcdir}"/dest install
 
   #pushd ${CHOST}/winsup/cygwin > /dev/null
