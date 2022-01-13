@@ -78,6 +78,9 @@ build() {
        HISTORY_LDFLAGS= \
        READLINE_LDFLAGS= \
        LOCAL_LDFLAGS='-Wl,--export-all,--out-implib,lib$(@:.exe=.dll.a)'
+
+  test -z "$SIGNTOOL" ||
+  eval "$SIGNTOOL" bash.exe
 }
 
 check() {
