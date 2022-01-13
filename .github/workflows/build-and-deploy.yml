@@ -19,6 +19,9 @@ on:
 
 env:
   PACKAGE_TO_BUILD: "${{github.event.inputs.package}}"
+  ARCHITECTURE: "${{github.event.inputs.architecture}}"
+  BUILD_ONLY: "${{github.event.inputs.build_only}}"
+  DEBUG_WITH_SSH_KEY: "${{github.event.inputs.debug_with_ssh_key}}"
   GPG_OPTIONS: "--batch --yes --no-tty --list-options no-show-photos --verify-options no-show-photos --pinentry-mode loopback"
   HOME: "${{github.workspace}}\\home"
 
@@ -40,7 +43,7 @@ jobs:
         uses: git-for-windows/setup-git-for-windows-sdk@v1
         with:
           flavor: full
-          architecture: ${{github.event.inputs.architecture}}
+          architecture: ${{env.ARCHITECTURE}}
           msys: true
       - name: Clone MSYS2-packages
         shell: bash
@@ -53,7 +56,7 @@ jobs:
         shell: bash
         run: git clone --depth 1 --single-branch -b main https://github.com/git-for-windows/build-extra /usr/src/build-extra
       - name: Run rebaseall
-        if: github.event.inputs.architecture == 'i686' && !contains('msys2-runtime gnupg', env.PACKAGE_TO_BUILD)
+        if: env.ARCHITECTURE == 'i686' && !contains('msys2-runtime gnupg', env.PACKAGE_TO_BUILD)
         shell: powershell
         run: |
           cd C:\git-sdk-32-full-sdk
@@ -75,7 +78,7 @@ jobs:
       - name: Get GPG key(s)
         shell: bash
         run: |
-          cd "/usr/src/MSYS2-packages/${{github.event.inputs.package}}" &&
+          cd "/usr/src/MSYS2-packages/$PACKAGE_TO_BUILD" &&
           . PKGBUILD &&
           for key in "${validpgpkeys[@]}" 57759F748D223F034D8BE870BB3AA74136C569BB
           do
@@ -108,7 +111,7 @@ jobs:
           echo "$CODESIGN_PASS" >home/.sig/codesign.pass
           git config --global alias.signtool '!sh "/usr/src/build-extra/signtool.sh"'
           echo "SIGNTOOL=git signtool" >>$GITHUB_ENV
-      - name: Build ${{github.event.inputs.package}}
+      - name: Build ${{env.PACKAGE_TO_BUILD}}
         env:
           GPGKEY: ${{secrets.GPGKEY}}
         shell: bash
@@ -118,7 +121,7 @@ jobs:
 
           dir="$(cygpath -au artifacts)" &&
           mkdir -p "$dir" &&
-          cd "/usr/src/MSYS2-packages/${{github.event.inputs.package}}" &&
+          cd "/usr/src/MSYS2-packages/$PACKAGE_TO_BUILD" &&
           MAKEFLAGS=-j6 PKGEXT='.pkg.tar.xz' makepkg -s --noconfirm &&
           ls -la &&
           cp *.pkg.tar* "$dir/"
@@ -128,7 +131,7 @@ jobs:
           name: artifacts
           path: artifacts
       - name: Prepare home directory for deploying to the Pacman repository
-        if: github.event.inputs.build_only != 'true' && env.AZURE_BLOBS_TOKEN != ''
+        if: env.BUILD_ONLY != 'true' && env.AZURE_BLOBS_TOKEN != ''
         env:
           AZURE_BLOBS_TOKEN: ${{secrets.AZURE_BLOBS_TOKEN}}
         shell: bash
@@ -137,11 +140,11 @@ jobs:
         shell: bash
         env:
           GPGKEY: ${{secrets.GPGKEY}}
-          FALLBACK_ARCHITECTURE: ${{github.event.inputs.architecture}}
-          PACMANDRYRUN: ${{github.event.inputs.build_only}}
+          FALLBACK_ARCHITECTURE: ${{env.ARCHITECTURE}}
+          PACMANDRYRUN: ${{env.BUILD_ONLY}}
         run: /usr/src/build-extra/pacman-helper.sh quick_add artifacts/*
       - name: Debug using tmate
-        if: failure() && github.event.inputs.debug_with_ssh_key != ''
+        if: failure() && env.DEBUG_WITH_SSH_KEY != ''
         shell: bash
         run: |
           # Install tmate
@@ -149,7 +152,7 @@ jobs:
 
           # Restrict SSH access to the "actor", i.e. the GitHub user who triggered this workflow
           mkdir -p ~/.ssh &&
-          echo '${{github.event.inputs.debug_with_ssh_key}}' >~/.ssh/authorized_keys &&
+          echo "$DEBUG_WITH_SSH_KEY" >~/.ssh/authorized_keys &&
 
           # Generate an SSH key (needed for tmate)
           echo -e 'y\n' | ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa &&
