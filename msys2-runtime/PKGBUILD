@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.3.3
-pkgrel=3
+pkgrel=4
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -88,7 +88,8 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0061-Cygwin-pty-fix-bug-in-reduced-input-transfer.patch
         0062-fixup-CI-add-a-GHA-for-doing-a-basic-build-test.patch
         0063-fixup-CI-add-a-GHA-for-doing-a-basic-build-test.patch
-        0064-Stop-enabling-virtual-terminal-input-with-MSYS-disab.patch)
+        0064-Stop-enabling-virtual-terminal-input-with-MSYS-disab.patch
+        0065-posix_spawn-fix-get-set-uid-gid-calls-for-32-bit-Cyg.patch)
 sha256sums=('SKIP'
             '59c53c74c5c0e6f8d0020eb2d4b7ea69e29f0682b985185fac07c3a90966c88b'
             '97240278790878f2ca238c64c025eab710281b765a71009c619b663ca120ffad'
@@ -153,7 +154,8 @@ sha256sums=('SKIP'
             '88907b250597779d982af8bf1ee88cde3fc0a4a78dbaa59f74edfee6b574daff'
             'd8601fe8958739d90984ff62b9ce2c74842d3146f3ddef5212ca06cbc66437e5'
             'e76a0600aa4a7d695de4f5969130cc89c192869a415c88bf4af28be383f8ba8d'
-            '68fe472dd4c2bf1c35d197e9598dc1c19f9ba356aec93110ea5b82c5577b0d04')
+            '68fe472dd4c2bf1c35d197e9598dc1c19f9ba356aec93110ea5b82c5577b0d04'
+            '52350a5ba8b6be59a9b151657f6259a4013ab75ae10d13b6251d40524f8f11fd')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -244,6 +246,7 @@ prepare() {
   git am --committer-date-is-author-date "${srcdir}"/0062-fixup-CI-add-a-GHA-for-doing-a-basic-build-test.patch
   git am --committer-date-is-author-date "${srcdir}"/0063-fixup-CI-add-a-GHA-for-doing-a-basic-build-test.patch
   git am --committer-date-is-author-date "${srcdir}"/0064-Stop-enabling-virtual-terminal-input-with-MSYS-disab.patch
+  git am --committer-date-is-author-date "${srcdir}"/0065-posix_spawn-fix-get-set-uid-gid-calls-for-32-bit-Cyg.patch
 }
 
 build() {
