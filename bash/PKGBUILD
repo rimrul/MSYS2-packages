@@ -80,7 +80,7 @@ build() {
        LOCAL_LDFLAGS='-Wl,--export-all,--out-implib,lib$(@:.exe=.dll.a)'
 
   test -z "$SIGNTOOL" ||
-  eval "$SIGNTOOL" bash.exe
+  eval "$SIGNTOOL" "$PWD/bash.exe"
 }
 
 check() {
