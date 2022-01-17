@@ -276,7 +276,7 @@ build() {
   then
     eval "$SIGNTOOL" \
       ${PWD}/${CHOST}/winsup/cygwin/msys0.dll \
-      ${PWD}/${CHOST}/winsup/utils/*.exe
+      ${PWD}/${CHOST}/winsup/utils/*.exe ${PWD}/${CHOST}/winsup/utils/mingw/*.exe
   fi
 
   LC_ALL=C make -j1 DESTDIR="${srcdir}"/dest install
