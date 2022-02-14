@@ -1,4 +1,4 @@
-From de9355d683383b7e80c2030b650fb5a3634428cd Mon Sep 17 00:00:00 2001
+From f0cc1ed522e422070c6f98302844f29c50963894 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Thu, 20 Aug 2020 12:22:05 +0200
 Subject: [PATCH 59/N] Do not try to sync with Cygwin

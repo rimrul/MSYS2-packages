@@ -1,0 +1,33 @@
+From daa6c3469a4a666a4349d2bca237581754a6b863 Mon Sep 17 00:00:00 2001
+From: Johannes Schindelin <johannes.schindelin@gmx.de>
+Date: Mon, 14 Feb 2022 21:53:41 +0100
+Subject: [PATCH 61/N] fixup! Stop enabling virtual terminal input with
+ MSYS=disable_pcon
+
+Let's drop this in preparation for integrating a backport of a more
+complete hack from Cygwin.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_console.cc | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/winsup/cygwin/fhandler_console.cc b/winsup/cygwin/fhandler_console.cc
+index 5f361e7..da1d2e8 100644
+--- a/winsup/cygwin/fhandler_console.cc
++++ b/winsup/cygwin/fhandler_console.cc
+@@ -461,11 +461,6 @@ fhandler_console::set_input_mode (tty::cons_mode m, const termios *t,
+   DWORD flags = 0, oflags;
+   WaitForSingleObject (p->input_mutex, mutex_timeout);
+   GetConsoleMode (p->input_handle, &oflags);
+-  if (disable_pcon && m == tty::cygwin)
+-    /* If we disabled pseudo console support explicitly, it would be wrong to
+-       mess with the flags. In fact, we _still_ mess with the flags, but at
+-       least with tty::restore we do little damage. */
+-    m = tty::restore;
+   switch (m)
+     {
+     case tty::restore:
+-- 
+2.9.0
+
