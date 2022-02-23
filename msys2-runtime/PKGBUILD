@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.3.4
-pkgrel=1
+pkgrel=2
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -94,7 +94,8 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0067-Cygwin-pty-Discard-input-in-from_master_nat-pipe-on-.patch
         0068-Cygwin-pty-Fix-a-bug-in-tty_min-segpgid.patch
         0069-Cygwin-console-Fix-console-mode-for-non-cygwin-infer.patch
-        0070-Cygwin-console-Set-console-mode-even-if-stdin-stdout.patch)
+        0070-Cygwin-console-Set-console-mode-even-if-stdin-stdout.patch
+        0071-Implicitly-support-the-dev-fd-symlink-and-friends.patch)
 sha256sums=('SKIP'
             '3d00c77cd023bee3861d1eaa89deecb0fc277ec3bb13e317de3dddc3b1eca094'
             '0b0ca0c86d118ac8842c0ca9d0df28453ee5b613d76ade265169d5524b3004d8'
@@ -165,7 +166,8 @@ sha256sums=('SKIP'
             '395f0f406581ba2de28594d52532fbb80663f564a44b307434b5f91407c55b8c'
             '87a89ab6c11daaa95eb2804c6f19d9c7640821a0a7c57d0edeb22b3a14c403c7'
             'b4d0a6693dec32c599cc0dc137207e705a81ca8567e381e50456dd5132ab7932'
-            '0c1c0f9e84e00c8b759ec2b00eeb08f31a87ce7abf8454399b84d06761ec3939')
+            '0c1c0f9e84e00c8b759ec2b00eeb08f31a87ce7abf8454399b84d06761ec3939'
+            '9424de93d34f0a14cd8c380c9cb6a8033fda3d52a8fc4ee8e8dc4fb6247d1714')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -262,6 +264,7 @@ prepare() {
   git am --committer-date-is-author-date "${srcdir}"/0068-Cygwin-pty-Fix-a-bug-in-tty_min-segpgid.patch
   git am --committer-date-is-author-date "${srcdir}"/0069-Cygwin-console-Fix-console-mode-for-non-cygwin-infer.patch
   git am --committer-date-is-author-date "${srcdir}"/0070-Cygwin-console-Set-console-mode-even-if-stdin-stdout.patch
+  git am --committer-date-is-author-date "${srcdir}"/0071-Implicitly-support-the-dev-fd-symlink-and-friends.patch
 }
 
 build() {
