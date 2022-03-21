@@ -1,8 +1,9 @@
-diff -Naur gnutls-3.6.3-orig/build-aux/ar-lib gnutls-3.6.3/build-aux/ar-lib
---- gnutls-3.6.3-orig/build-aux/ar-lib	2018-07-13 08:14:46.000000000 +0300
-+++ gnutls-3.6.3/build-aux/ar-lib	2018-07-26 13:56:44.494565900 +0300
-@@ -56,6 +56,9 @@
- 	  CYGWIN*)
+diff --git a/build-aux/ar-lib b/build-aux/ar-lib
+index 1e9388e..0025871 100755
+--- a/build-aux/ar-lib
++++ b/build-aux/ar-lib
+@@ -56,6 +56,9 @@ func_file_conv ()
+ 	  CYGWIN* | MSYS*)
  	    file_conv=cygwin
  	    ;;
 +	  MSYS*)
@@ -11,8 +12,8 @@ diff -Naur gnutls-3.6.3-orig/build-aux/ar-lib gnutls-3.6.3/build-aux/ar-lib
  	  *)
  	    file_conv=wine
  	    ;;
-@@ -68,6 +71,9 @@
- 	cygwin)
+@@ -68,6 +71,9 @@ func_file_conv ()
+ 	cygwin | msys)
  	  file=`cygpath -m "$file" || echo "$file"`
  	  ;;
 +	msys)
@@ -21,23 +22,25 @@ diff -Naur gnutls-3.6.3-orig/build-aux/ar-lib gnutls-3.6.3/build-aux/ar-lib
  	wine)
  	  file=`winepath -w "$file" || echo "$file"`
  	  ;;
-diff -Naur gnutls-3.6.3-orig/build-aux/config.guess gnutls-3.6.3/build-aux/config.guess
---- gnutls-3.6.3-orig/build-aux/config.guess	2018-06-16 16:27:19.000000000 +0300
-+++ gnutls-3.6.3/build-aux/config.guess	2018-07-26 13:57:41.060265300 +0300
-@@ -883,6 +883,9 @@
+diff --git a/build-aux/config.guess b/build-aux/config.guess
+index dc0a6b2..4e2a75d 100755
+--- a/build-aux/config.guess
++++ b/build-aux/config.guess
+@@ -917,6 +917,9 @@ EOF
      amd64:CYGWIN*:*:* | x86_64:CYGWIN*:*:*)
- 	echo x86_64-unknown-cygwin
+ 	echo x86_64-pc-cygwin
  	exit ;;
 +    amd64:MSYS*:*:* | x86_64:MSYS*:*:*)
 +	echo x86_64-unknown-msys
 +	exit ;;
      prep*:SunOS:5.*:*)
- 	echo powerpcle-unknown-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
+ 	echo powerpcle-unknown-solaris2"$(echo "$UNAME_RELEASE"|sed -e 's/[^.]*//')"
  	exit ;;
-diff -Naur gnutls-3.6.3-orig/build-aux/config.rpath gnutls-3.6.3/build-aux/config.rpath
---- gnutls-3.6.3-orig/build-aux/config.rpath	2018-07-13 08:13:41.000000000 +0300
-+++ gnutls-3.6.3/build-aux/config.rpath	2018-07-26 13:58:24.927542300 +0300
-@@ -57,7 +57,7 @@
+diff --git a/build-aux/config.rpath b/build-aux/config.rpath
+index 4b7dc49..401c014 100755
+--- a/build-aux/config.rpath
++++ b/build-aux/config.rpath
+@@ -57,7 +57,7 @@ else
      aix*)
        wl='-Wl,'
        ;;
@@ -46,7 +49,7 @@ diff -Naur gnutls-3.6.3-orig/build-aux/config.rpath gnutls-3.6.3/build-aux/confi
        ;;
      hpux9* | hpux10* | hpux11*)
        wl='-Wl,'
-@@ -149,7 +149,7 @@
+@@ -149,7 +149,7 @@ hardcode_direct=no
  hardcode_minus_L=no
  
  case "$host_os" in
@@ -55,7 +58,7 @@ diff -Naur gnutls-3.6.3-orig/build-aux/config.rpath gnutls-3.6.3/build-aux/confi
      # FIXME: the MSVC++ port hasn't been tested in a loooong time
      # When not using gcc, we currently assume that we are using
      # Microsoft Visual C++.
-@@ -198,7 +198,7 @@
+@@ -198,7 +198,7 @@ if test "$with_gnu_ld" = yes; then
          ld_shlibs=no
        fi
        ;;
@@ -64,7 +67,7 @@ diff -Naur gnutls-3.6.3-orig/build-aux/config.rpath gnutls-3.6.3/build-aux/confi
        # hardcode_libdir_flag_spec is actually meaningless, as there is
        # no search path for DLLs.
        hardcode_libdir_flag_spec='-L$libdir'
-@@ -348,7 +348,7 @@
+@@ -348,7 +348,7 @@ else
        ;;
      bsdi[45]*)
        ;;
@@ -73,7 +76,7 @@ diff -Naur gnutls-3.6.3-orig/build-aux/config.rpath gnutls-3.6.3/build-aux/confi
        # When not using gcc, we currently assume that we are using
        # Microsoft Visual C++.
        # hardcode_libdir_flag_spec is actually meaningless, as there is
-@@ -533,7 +533,7 @@
+@@ -533,7 +533,7 @@ case "$host_os" in
    bsdi[45]*)
      library_names_spec='$libname$shrext'
      ;;
@@ -82,10 +85,11 @@ diff -Naur gnutls-3.6.3-orig/build-aux/config.rpath gnutls-3.6.3/build-aux/confi
      shrext=.dll
      library_names_spec='$libname.dll.a $libname.lib'
      ;;
-diff -Naur gnutls-3.6.3-orig/m4/dup2.m4 gnutls-3.6.3/m4/dup2.m4
---- gnutls-3.7.0/m4/dup2.m4.orig	2020-12-09 23:35:38.804994300 +0100
-+++ gnutls-3.7.0/m4/dup2.m4	2020-12-09 23:36:31.302546400 +0100
-@@ -69,7 +69,7 @@
+diff --git a/m4/dup2.m4 b/m4/dup2.m4
+index 0753a32..22da0bc 100644
+--- a/m4/dup2.m4
++++ b/m4/dup2.m4
+@@ -69,7 +69,7 @@ AC_DEFUN([gl_FUNC_DUP2],
        [case "$host_os" in
           mingw*) # on this platform, dup2 always returns 0 for success
             gl_cv_func_dup2_works="guessing no" ;;
@@ -94,10 +98,11 @@ diff -Naur gnutls-3.6.3-orig/m4/dup2.m4 gnutls-3.6.3/m4/dup2.m4
             gl_cv_func_dup2_works="guessing no" ;;
           aix* | freebsd*)
                   # on AIX 7.1 and FreeBSD 6.1, dup2 (1,toobig) gives EMFILE,
-diff -Naur gnutls-3.6.3-orig/m4/fcntl.m4 gnutls-3.6.3/m4/fcntl.m4
---- gnutls-3.6.3-orig/m4/fcntl.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/m4/fcntl.m4	2018-07-26 13:59:23.474445200 +0300
-@@ -69,7 +69,7 @@
+diff --git a/m4/fcntl.m4 b/m4/fcntl.m4
+index f626434..cb8bcc4 100644
+--- a/m4/fcntl.m4
++++ b/m4/fcntl.m4
+@@ -70,7 +70,7 @@ AC_DEFUN([gl_FUNC_FCNTL],
           [gl_cv_func_fcntl_f_dupfd_works=yes],
           [gl_cv_func_fcntl_f_dupfd_works=no],
           [case $host_os in
@@ -106,22 +111,11 @@ diff -Naur gnutls-3.6.3-orig/m4/fcntl.m4 gnutls-3.6.3/m4/fcntl.m4
                 gl_cv_func_fcntl_f_dupfd_works="guessing no" ;;
              *) gl_cv_func_fcntl_f_dupfd_works="guessing yes" ;;
            esac])])
-diff -Naur gnutls-3.6.3-orig/m4/getcwd.m4 gnutls-3.6.3/m4/getcwd.m4
---- gnutls-3.6.3-orig/src/gl/m4/getcwd.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/src/gl/m4/getcwd.m4	2018-07-26 13:59:50.899293300 +0300
-@@ -51,7 +51,7 @@
-                            # Guess yes on musl systems.
-             *-musl*)       gl_cv_func_getcwd_null="guessing yes";;
-                            # Guess yes on Cygwin.
--            cygwin*)       gl_cv_func_getcwd_null="guessing yes";;
-+            cygwin*|msys*) gl_cv_func_getcwd_null="guessing yes";;
-                            # If we don't know, obey --enable-cross-guesses.
-             *)             gl_cv_func_getcwd_null="$gl_cross_guess_normal";;
-           esac
-diff -Naur gnutls-3.6.3-orig/m4/getdtablesize.m4 gnutls-3.6.3/m4/getdtablesize.m4
---- gnutls-3.6.3-orig/m4/getdtablesize.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/m4/getdtablesize.m4	2018-07-26 14:00:10.149727100 +0300
-@@ -39,7 +39,7 @@
+diff --git a/m4/getdtablesize.m4 b/m4/getdtablesize.m4
+index 8fbc941..d856b77 100644
+--- a/m4/getdtablesize.m4
++++ b/m4/getdtablesize.m4
+@@ -42,7 +42,7 @@ AC_DEFUN([gl_FUNC_GETDTABLESIZE],
               [gl_cv_func_getdtablesize_works=yes],
               [gl_cv_func_getdtablesize_works=no],
               [case "$host_os" in
@@ -130,22 +124,11 @@ diff -Naur gnutls-3.6.3-orig/m4/getdtablesize.m4 gnutls-3.6.3/m4/getdtablesize.m
                    gl_cv_func_getdtablesize_works="guessing no" ;;
                  *) gl_cv_func_getdtablesize_works="guessing yes" ;;
                esac
-diff -Naur gnutls-3.6.3-orig/m4/malloc.m4 gnutls-3.6.3/m4/malloc.m4
---- gnutls-3.6.3-orig/m4/malloc.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/m4/malloc.m4	2018-07-26 14:00:29.805761700 +0300
-@@ -33,7 +33,7 @@
-        [case "$host_os" in
-           # Guess yes on platforms where we know the result.
-           *-gnu* | gnu* | *-musl* | freebsd* | netbsd* | openbsd* \
--          | hpux* | solaris* | cygwin* | mingw*)
-+          | hpux* | solaris* | cygwin* | msys* | mingw*)
-             ac_cv_func_malloc_0_nonnull="guessing yes" ;;
-           # If we don't know, assume the worst.
-           *) ac_cv_func_malloc_0_nonnull="guessing no" ;;
-diff -Naur gnutls-3.6.3-orig/m4/printf.m4 gnutls-3.6.3/m4/printf.m4
---- gnutls-3.6.3-orig/m4/printf.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/m4/printf.m4	2018-07-26 14:01:04.375422400 +0300
-@@ -785,6 +785,7 @@
+diff --git a/m4/printf.m4 b/m4/printf.m4
+index 284c7c5..a5aba48 100644
+--- a/m4/printf.m4
++++ b/m4/printf.m4
+@@ -817,6 +817,7 @@ changequote(,)dnl
             irix*)           gl_cv_func_printf_directive_ls="guessing no";;
             solaris*)        gl_cv_func_printf_directive_ls="guessing no";;
             cygwin*)         gl_cv_func_printf_directive_ls="guessing no";;
@@ -153,7 +136,7 @@ diff -Naur gnutls-3.6.3-orig/m4/printf.m4 gnutls-3.6.3/m4/printf.m4
             beos* | haiku*)  gl_cv_func_printf_directive_ls="guessing no";;
                              # Guess no on Android.
             linux*-android*) gl_cv_func_printf_directive_ls="guessing no";;
-@@ -869,6 +869,7 @@
+@@ -901,6 +902,7 @@ int main ()
  changequote(,)dnl
           case "$host_os" in
             cygwin*)         gl_cv_func_printf_flag_grouping="guessing no";;
@@ -161,7 +144,7 @@ diff -Naur gnutls-3.6.3-orig/m4/printf.m4 gnutls-3.6.3/m4/printf.m4
             netbsd*)         gl_cv_func_printf_flag_grouping="guessing no";;
                              # Guess no on Android.
             linux*-android*) gl_cv_func_printf_flag_grouping="guessing no";;
-@@ -1564,6 +1564,7 @@
+@@ -1614,6 +1616,7 @@ changequote(,)dnl
             darwin*)              gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
                                   # Guess yes on Cygwin.
             cygwin*)              gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
@@ -169,22 +152,11 @@ diff -Naur gnutls-3.6.3-orig/m4/printf.m4 gnutls-3.6.3/m4/printf.m4
                                   # Guess yes on Solaris >= 2.6.
             solaris2.[0-5] | solaris2.[0-5].*)
                                   gl_cv_func_vsnprintf_zerosize_c99="guessing no";;
-diff -Naur gnutls-3.6.3-orig/m4/realloc.m4 gnutls-3.6.3/m4/realloc.m4
---- gnutls-3.6.3-orig/m4/realloc.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/m4/realloc.m4	2018-07-26 14:01:20.739851100 +0300
-@@ -33,7 +33,7 @@
-        [case "$host_os" in
-           # Guess yes on platforms where we know the result.
-           *-gnu* | gnu* | *-musl* | freebsd* | netbsd* | openbsd* \
--          | hpux* | solaris* | cygwin* | mingw*)
-+          | hpux* | solaris* | cygwin* | msys* | mingw*)
-             ac_cv_func_realloc_0_nonnull="guessing yes" ;;
-           # If we don't know, assume the worst.
-           *) ac_cv_func_realloc_0_nonnull="guessing no" ;;
-diff -Naur gnutls-3.6.3-orig/m4/threadlib.m4 gnutls-3.6.3/m4/threadlib.m4
---- gnutls-3.6.3-orig/m4/threadlib.m4	2018-07-13 08:13:42.000000000 +0300
-+++ gnutls-3.6.3/m4/threadlib.m4	2018-07-26 14:01:49.554101800 +0300
-@@ -413,7 +413,7 @@
+diff --git a/m4/threadlib.m4 b/m4/threadlib.m4
+index 8fc3dfd..4db1104 100644
+--- a/m4/threadlib.m4
++++ b/m4/threadlib.m4
+@@ -413,7 +413,7 @@ changequote(,)dnl
           dnl Disable multithreading by default on Cygwin 1.5.x, because it has
           dnl bugs that lead to endless loops or crashes. See
           dnl <https://cygwin.com/ml/cygwin/2009-08/msg00283.html>.
@@ -193,3 +165,16 @@ diff -Naur gnutls-3.6.3-orig/m4/threadlib.m4 gnutls-3.6.3/m4/threadlib.m4
                 case `uname -r` in
                   1.[0-5].*) gl_use_threads=no ;;
                   *)         gl_use_threads=yes ;;
+diff --git a/src/gl/m4/getcwd.m4 b/src/gl/m4/getcwd.m4
+index 6ec7a94..c1250c7 100644
+--- a/src/gl/m4/getcwd.m4
++++ b/src/gl/m4/getcwd.m4
+@@ -54,7 +54,7 @@ AC_DEFUN([gl_FUNC_GETCWD_NULL],
+                            # Guess yes on musl systems.
+             *-musl*)       gl_cv_func_getcwd_null="guessing yes";;
+                            # Guess yes on Cygwin.
+-            cygwin*)       gl_cv_func_getcwd_null="guessing yes";;
++            cygwin*|msys*) gl_cv_func_getcwd_null="guessing yes";;
+                            # If we don't know, obey --enable-cross-guesses.
+             *)             gl_cv_func_getcwd_null="$gl_cross_guess_normal";;
+           esac
