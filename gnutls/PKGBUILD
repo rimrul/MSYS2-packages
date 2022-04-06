@@ -21,28 +21,27 @@ makedepends=('gettext-devel'
              'zlib-devel')
 #optdepends=('guile: for use with Guile bindings')
 source=(https://gnupg.org/ftp/gcrypt/gnutls/v${_base_ver%.*}/${pkgname}-${pkgver}.tar.xz{,.sig}
-        gnutls-3.6.3-msysize.patch)
+        gnulib-weak.patch)
 sha256sums=('e6adbebcfbc95867de01060d93c789938cf89cc1d1f6ef9ef661890f6217451f'
             'SKIP'
-            '139f195ca00005aaf3752fbdfb3b44eb475783e7e87a458f6657604b94b4eae4')
-validpgpkeys=('0424D4EE81A0E3D119C6F835EDA21E94B565716F'
-              '1F42418905D8206AA754CCDC29EE58B996865171'
-              '462225C3B46F34879FC8496CD605848ED7E69871')
-               # "Simon Josefsson <simon@josefsson.org>"
-               # "Nikos Mavrogiannopoulos <nmav@gnutls.org>
-	       # "Daiki Ueno <ueno@unixuser.org>"
+            '610499234d0442a27d048dab0dd233111d78f67c928979e40a02b6ac223bfbbf')
+validpgpkeys=('0424D4EE81A0E3D119C6F835EDA21E94B565716F' # "Simon Josefsson <simon@josefsson.org>"
+              '1F42418905D8206AA754CCDC29EE58B996865171' # "Nikos Mavrogiannopoulos <nmav@gnutls.org>
+              '462225C3B46F34879FC8496CD605848ED7E69871') # "Daiki Ueno <ueno@unixuser.org>"
 
 prepare() {
   cd "${srcdir}"/${pkgname}-${_base_ver}
-  patch -p1 -i ${srcdir}/gnutls-3.6.3-msysize.patch
+  patch -p1 -i ${srcdir}/gnulib-weak.patch
 
   autoreconf -vfi
 }
 
 build() {
   cd "${srcdir}/${pkgname}-${_base_ver}"
+
+  local CYGWIN_CHOST="${CHOST/-msys/-cygwin}"
   ./configure \
-    --build=${CHOST} \
+    --build=${CYGWIN_CHOST} \
     --prefix=/usr \
     --enable-shared \
     --enable-static \
@@ -74,7 +73,6 @@ package_gnutls() {
 package_libgnutls() {
   depends=('gcc-libs' 'libidn2' 'libiconv' 'libintl' 'gmp' 'libnettle' 'libp11-kit' 'libtasn1' 'zlib')
   groups=('libraries')
-  install=libgnutls.install
 
   mkdir -p ${pkgdir}/usr/bin
   cp -f ${srcdir}/dest/usr/bin/*.dll ${pkgdir}/usr/bin/
@@ -86,7 +84,11 @@ package_libgnutls() {
 package_libgnutls-devel() {
   pkgdesc="Libgnutls headers and libraries"
   groups=('development')
-  depends=("libgnutls=${pkgver}")
+  depends=("libgnutls=${pkgver}"
+           'libidn2-devel'
+           'libnettle-devel'
+           'libp11-kit-devel'
+           'libtasn1-devel')
 
   mkdir -p ${pkgdir}/usr/lib
   cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
