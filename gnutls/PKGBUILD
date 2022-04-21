@@ -51,6 +51,9 @@ build() {
     --enable-heartbeat-support \
     --with-default-trust-store-file=/usr/ssl/certs/ca-bundle.crt
 
+  # Ensure the `msys-` prefix
+  case "$CARCH" in i686) cp /usr/bin/libtool ./;; esac
+
   make
   make DESTDIR="${srcdir}/dest" install
   rm ${srcdir}/dest/usr/share/info/dir
