@@ -1,4 +1,4 @@
-From 182f8aee80307ed1ffc31c3d17d0d3cfb616b17e Mon Sep 17 00:00:00 2001
+From 488c45ebd60bb7f9e0d61e7735e606e755045b64 Mon Sep 17 00:00:00 2001
 From: Mihail Konev <k.mvc@ya.ru>
 Date: Sat, 4 Mar 2017 07:43:42 +0500
 Subject: [PATCH 1/2] add msys2 launcher
@@ -36,7 +36,7 @@ least for the current Windows 10.
  create mode 100644 src/launcher.h
 
 diff --git a/src/appinfo.h b/src/appinfo.h
-index 63e6a69..0be9369 100644
+index 45a07d3..4587b83 100644
 --- a/src/appinfo.h
 +++ b/src/appinfo.h
 @@ -10,7 +10,7 @@
@@ -45,8 +45,8 @@ index 63e6a69..0be9369 100644
  // needed for res.rc
 -#define APPDESC "Terminal"
 +#define APPDESC "MSYS2 terminal"
- #define AUTHOR  "Thomas Wolff / Andy Koppe"
- #define YEAR    "2022 / 2013"
+ #define AUTHOR  "Thomas Wolff, Andy Koppe"
+ #define YEAR    "2022"
  
 diff --git a/src/launcher.c b/src/launcher.c
 new file mode 100644
@@ -248,7 +248,7 @@ index 156843b..a329dca 100644
   * The actual VERSIONINFO resource.
   */
 diff --git a/src/winmain.c b/src/winmain.c
-index 530a20b..1631431 100644
+index 4f86b87..ba7925f 100644
 --- a/src/winmain.c
 +++ b/src/winmain.c
 @@ -60,6 +60,9 @@ typedef UINT_PTR uintptr_t;
@@ -261,7 +261,7 @@ index 530a20b..1631431 100644
  
  char * home;
  char * cmd;
-@@ -6332,6 +6335,8 @@ main(int argc, char *argv[])
+@@ -6338,6 +6341,8 @@ main(int argc, char *argv[])
      }
    }
  
@@ -270,7 +270,7 @@ index 530a20b..1631431 100644
    // The window class.
    class_atom = RegisterClassExW(&(WNDCLASSEXW){
      .cbSize = sizeof(WNDCLASSEXW),
-@@ -6340,7 +6345,7 @@ main(int argc, char *argv[])
+@@ -6346,7 +6351,7 @@ main(int argc, char *argv[])
      .cbClsExtra = 0,
      .cbWndExtra = 0,
      .hInstance = inst,
@@ -279,7 +279,7 @@ index 530a20b..1631431 100644
      .hIconSm = small_icon,
      .hCursor = LoadCursor(null, IDC_IBEAM),
      .hbrBackground = null,
-@@ -6843,6 +6848,17 @@ static int dynfonts = 0;
+@@ -6849,6 +6854,17 @@ static int dynfonts = 0;
    */
    SetFocus(wnd);
  
@@ -297,7 +297,7 @@ index 530a20b..1631431 100644
    // Create child process.
    /* We could move this below SetFocus() or win_init_drop_target() 
       in order to further reduce the delay until window display (#1113) 
-@@ -6856,6 +6872,10 @@ static int dynfonts = 0;
+@@ -6862,6 +6878,10 @@ static int dynfonts = 0;
      &(struct winsize){term_rows, term_cols, term_cols * cell_width, term_rows * cell_height}
    );
  
@@ -309,5 +309,5 @@ index 530a20b..1631431 100644
    ShowWindow(wnd, show_cmd);
    // Cloning fullscreen window
 -- 
-2.34.1
+2.35.3
 
