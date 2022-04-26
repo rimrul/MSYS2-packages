@@ -46,7 +46,7 @@ index 63e6a69..0be9369 100644
 -#define APPDESC "Terminal"
 +#define APPDESC "MSYS2 terminal"
  #define AUTHOR  "Thomas Wolff / Andy Koppe"
- #define YEAR    "2022 / 2013"
+ #define YEAR    "2022"
  
 diff --git a/src/launcher.c b/src/launcher.c
 new file mode 100644
