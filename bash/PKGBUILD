@@ -80,8 +80,11 @@ build() {
        READLINE_LDFLAGS= \
        LOCAL_LDFLAGS='-Wl,--export-all,--out-implib,lib$(@:.exe=.dll.a)'
 
-  test -z "$SIGNTOOL" ||
-  eval "$SIGNTOOL" "$PWD/bash.exe"
+  test -z "$SIGNTOOL" || {
+    # first strip, then code-sign, otherwise the .exe becomes corrupt somehow
+    strip bash.exe &&
+    eval "$SIGNTOOL" "$PWD/bash.exe"
+  }
 }
 
 check() {
@@ -90,6 +93,9 @@ check() {
 }
 
 package_bash() {
+  # stripping after code-signing somehow corrupts the exe
+  test -z "$SIGNTOOL" || options=('!strip')
+
   provides=('sh')
   #install=bash.install
 
