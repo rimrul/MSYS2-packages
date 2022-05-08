@@ -1,0 +1,34 @@
+From e1b5e63ff56bf780bd1d73515e3605b25dee54ef Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sat, 9 Apr 2022 13:18:22 +0900
+Subject: [PATCH 058/N] Cygwin: pty: Close pseudo console only if the process
+ is the owner.
+
+- Currently, close_pseudoconsole() is called unconditionally from
+  fhandler_termios::process_sigs() on Ctrl-C. This causes deadlock
+  if Ctrl-C is pressed while setup_pseudoconsole() is called. With
+  this patch, close_pseudoconsole() is called only if the master
+  process is the owner of the nat-pipe to avoid the deadlock.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_tty.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/fhandler_tty.cc b/winsup/cygwin/fhandler_tty.cc
+index 3675250..3699232 100644
+--- a/winsup/cygwin/fhandler_tty.cc
++++ b/winsup/cygwin/fhandler_tty.cc
+@@ -4138,7 +4138,8 @@ void
+ fhandler_pty_slave::close_pseudoconsole_if_necessary (tty *ttyp,
+ 						      fhandler_termios *fh)
+ {
+-  if (fh->get_major () == DEV_PTYM_MAJOR && ttyp->pcon_activated)
++  if (fh->get_major () == DEV_PTYM_MAJOR && ttyp->pcon_activated
++      && pcon_pid_self (ttyp->pcon_pid))
+     {
+       fhandler_pty_master *ptym = (fhandler_pty_master *) fh;
+       WaitForSingleObject (ptym->pcon_mutex, INFINITE);
+-- 
+2.9.0
+

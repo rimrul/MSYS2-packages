@@ -1,0 +1,32 @@
+From 2d202c0cbdf1ea9c12af2d1fd13f56739fb26143 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Thu, 24 Feb 2022 21:04:49 +0900
+Subject: [PATCH 021/N] Cygwin: pinfo: Fix exit code when non-cygwin app
+ exits by Ctrl-C.
+
+- Previously, if non-cygwin app exits by Ctrl-C, exit code was
+  0x00007f00. With this patch, the exit code will be 0x00000002,
+  which means process exited by SIGINT.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/pinfo.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/winsup/cygwin/pinfo.cc b/winsup/cygwin/pinfo.cc
+index bce743b..bb7c165 100644
+--- a/winsup/cygwin/pinfo.cc
++++ b/winsup/cygwin/pinfo.cc
+@@ -156,6 +156,9 @@ pinfo::status_exit (DWORD x)
+ 	 a lengthy small_printf instead. */
+       x = SIGBUS;
+       break;
++    case STATUS_CONTROL_C_EXIT:
++      x = SIGINT;
++      break;
+     default:
+       debug_printf ("*** STATUS_%y\n", x);
+       x = 127 << 8;
+-- 
+2.9.0
+

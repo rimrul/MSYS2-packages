@@ -1,0 +1,37 @@
+From e895980473577414a605c3138c2ad8ced46dd495 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sun, 27 Feb 2022 12:33:08 +0900
+Subject: [PATCH 026/N] Cygwin: console: Correct the past fix for apps which
+ open pty.
+
+- The commit "Cygwin: console: Fix issues of apps which open pty."
+  did not fix the second problem correctly. That commit looked to
+  fix the issue, but the actual problem was that ctrl_c_handler()
+  should be reregistered *AFTER* FreeConsole()/AttachConsole().
+  This patch correct that.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_termios.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/winsup/cygwin/fhandler_termios.cc b/winsup/cygwin/fhandler_termios.cc
+index 5685233..767b283 100644
+--- a/winsup/cygwin/fhandler_termios.cc
++++ b/winsup/cygwin/fhandler_termios.cc
+@@ -344,10 +344,10 @@ fhandler_termios::process_sigs (char c, tty* ttyp, fhandler_termios *fh)
+ 	      (myself->dwProcessId, false);
+ 	  if (resume_pid && fh && !fh->is_console ())
+ 	    {
+-	      if (::cygheap->ctty && ::cygheap->ctty->is_console ())
+-		init_console_handler (false);
+ 	      FreeConsole ();
+ 	      AttachConsole (p->dwProcessId);
++	      if (::cygheap->ctty && ::cygheap->ctty->is_console ())
++		init_console_handler (true);
+ 	    }
+ 	  if (fh && p == myself && being_debugged ())
+ 	    { /* Avoid deadlock in gdb on console. */
+-- 
+2.9.0
+

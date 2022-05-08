@@ -1,0 +1,39 @@
+From b1dd109eec9501765b00d7afc09324121f5e1d86 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sat, 19 Mar 2022 08:43:24 +0900
+Subject: [PATCH 054/N] Cygwin: console: Ignore dwControlKeyState in event
+ comparison.
+
+- dwControlKeyState also may be null'ed on WriteConsoleInputW().
+  Therefore ignore it in event comparison as well as wVirtualKeyCode
+  and wVirtualScanCode.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_console.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/winsup/cygwin/fhandler_console.cc b/winsup/cygwin/fhandler_console.cc
+index 16850ae..1bfe05a 100644
+--- a/winsup/cygwin/fhandler_console.cc
++++ b/winsup/cygwin/fhandler_console.cc
+@@ -187,13 +187,13 @@ inrec_eq (const INPUT_RECORD *a, const INPUT_RECORD *b, DWORD n)
+   for (DWORD i = 0; i < n; i++)
+     {
+       if (a[i].EventType == KEY_EVENT && b[i].EventType == KEY_EVENT)
+-	{ /* wVirtualKeyCode and wVirtualScanCode of the readback
+-	     key event may be different from that of written event. */
++	{ /* wVirtualKeyCode, wVirtualScanCode and dwControlKeyState
++	     of the readback key event may be different from that of
++	     written event. Therefore they are ignored. */
+ 	  const KEY_EVENT_RECORD *ak = &a[i].Event.KeyEvent;
+ 	  const KEY_EVENT_RECORD *bk = &b[i].Event.KeyEvent;
+ 	  if (ak->bKeyDown != bk->bKeyDown
+ 	      || ak->uChar.UnicodeChar != bk->uChar.UnicodeChar
+-	      || ak->dwControlKeyState != bk->dwControlKeyState
+ 	      || ak->wRepeatCount != bk->wRepeatCount)
+ 	    return false;
+ 	}
+-- 
+2.9.0
+

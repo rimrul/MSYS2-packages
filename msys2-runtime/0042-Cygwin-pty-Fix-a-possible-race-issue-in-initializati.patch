@@ -1,0 +1,33 @@
+From fc4832635976212baf4c00d0468d4e4074765098 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Fri, 4 Mar 2022 22:02:35 +0900
+Subject: [PATCH 042/N] Cygwin: pty: Fix a possible race issue in
+ initialization of pcon.
+
+- Currently, tty::pcon_start flag is cleared before transfer_input()
+  in master::write(), however, the code in setup_pseudoconsole()
+  waits for transfer_input() using tty::pcon_start. This possibly
+  causes the race issue. The patch fixes this potential issue.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_tty.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/fhandler_tty.cc b/winsup/cygwin/fhandler_tty.cc
+index 2d7e2cf..a974606 100644
+--- a/winsup/cygwin/fhandler_tty.cc
++++ b/winsup/cygwin/fhandler_tty.cc
+@@ -3297,7 +3297,8 @@ fhandler_pty_slave::setup_pseudoconsole (bool nopcon)
+ 	  get_ttyp ()->pcon_start_pid = myself->pid;
+ 	  WriteFile (get_output_handle (), "\033[6n", 4, &n, NULL);
+ 	  ReleaseMutex (input_mutex);
+-	  while (get_ttyp ()->pcon_start)
++	  while (get_ttyp ()->pcon_start_pid)
++	    /* wait for completion of transfer_input() in master::write(). */
+ 	    Sleep (1);
+ 	}
+       /* Attach to the pseudo console which already exits. */
+-- 
+2.9.0
+

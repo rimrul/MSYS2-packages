@@ -1,0 +1,26 @@
+From a7273247fe325a80daa322852a92cf44348eac65 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Tue, 15 Mar 2022 08:15:29 +0900
+Subject: [PATCH 049/N] Cygwin: Add description of fsync() fix to 3.3.5
+ release notes.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/release/3.3.5 | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/winsup/cygwin/release/3.3.5 b/winsup/cygwin/release/3.3.5
+index ce7a212..752d657 100644
+--- a/winsup/cygwin/release/3.3.5
++++ b/winsup/cygwin/release/3.3.5
+@@ -36,3 +36,7 @@ Bug Fixes
+ - Fix a bug that the order of the console key inputs are occasionally
+   swapped, especially when CPU load is high.
+   Addresses: https://cygwin.com/pipermail/cygwin/2022-February/250957.html
++
++- Fix a problem that fsync() flushes the console input buffer unlike
++  linux. fsync() should return EINVAL for special files such as tty.
++  Addresses: https://cygwin.com/pipermail/cygwin/2022-March/251022.html
+-- 
+2.9.0
+

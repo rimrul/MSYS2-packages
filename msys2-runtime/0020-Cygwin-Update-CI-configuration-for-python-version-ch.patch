@@ -1,0 +1,36 @@
+From 2176b5ca9c4618c6c378f90fc3b6ba2e98450361 Mon Sep 17 00:00:00 2001
+From: Jon Turney <jon.turney@dronecode.org.uk>
+Date: Thu, 30 Dec 2021 00:33:28 +0000
+Subject: [PATCH 020/N] Cygwin: Update CI configuration for python version
+ change
+
+Update the python version for python-lxml and python-ply packages.
+
+'dblate' now depends on python39, so that will be installed and made the
+default by alternatives, so make sure that these python packages are
+also available for that python version.
+
+(cherry picked from commit 54b6c0e81f05ab2f047df64716f3fa2da3e7e2b1)
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ .appveyor.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.appveyor.yml b/.appveyor.yml
+index 6983667..8c03a3f 100644
+--- a/.appveyor.yml
++++ b/.appveyor.yml
+@@ -52,8 +52,8 @@ texlive-collection-latexrecommended,\
+ texlive-collection-fontsrecommended,\
+ texlive-collection-pictures,\
+ xmlto,\
+-python38-lxml,\
+-python38-ply"
++python39-lxml,\
++python39-ply"
+ 
+ build_script: >-
+     %CYGWIN_ROOT%/bin/bash -lc "
+-- 
+2.9.0
+

@@ -1,0 +1,33 @@
+From ab0eb07abe97cbebf771d4fac5a400c37c439b97 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Mon, 9 May 2022 00:54:35 +0900
+Subject: [PATCH 071/N] Cygwin: pty: Add missing attach_mutex guard.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_tty.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/winsup/cygwin/fhandler_tty.cc b/winsup/cygwin/fhandler_tty.cc
+index 31f399f..0cd69f3 100644
+--- a/winsup/cygwin/fhandler_tty.cc
++++ b/winsup/cygwin/fhandler_tty.cc
+@@ -3497,6 +3497,7 @@ skip_create:
+       HeapFree (GetProcessHeap (), 0, hp);
+     }
+ 
++  acquire_attach_mutex (mutex_timeout);
+   if (get_ttyp ()->previous_code_page)
+     SetConsoleCP (get_ttyp ()->previous_code_page);
+   if (get_ttyp ()->previous_output_code_page)
+@@ -3527,6 +3528,7 @@ skip_create:
+ 	mode |= DISABLE_NEWLINE_AUTO_RETURN;
+       SetConsoleMode (hpConOut, mode);
+     }
++  release_attach_mutex ();
+ 
+   return true;
+ 
+-- 
+2.9.0
+

@@ -1,0 +1,31 @@
+From a0f2630dd334910562d7f5c3605a614bc596ad5b Mon Sep 17 00:00:00 2001
+From: Corinna Vinschen <corinna@vinschen.de>
+Date: Tue, 1 Mar 2022 10:14:42 +0100
+Subject: [PATCH 033/N] Cygwin: sysconf: _SC_TZNAME_MAX: return -1 as valid
+ value
+
+sysconf incorrectly sets errno to EINVAL for _SC_TZNAME_MAX.
+Don't do that.
+
+Signed-off-by: Corinna Vinschen <corinna@vinschen.de>
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/sysconf.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/sysconf.cc b/winsup/cygwin/sysconf.cc
+index 70cdb0f..8240db2 100644
+--- a/winsup/cygwin/sysconf.cc
++++ b/winsup/cygwin/sysconf.cc
+@@ -527,7 +527,7 @@ static struct
+   {cons, {c:SEM_VALUE_MAX}},		/*  17, _SC_SEM_VALUE_MAX */
+   {cons, {c:SIGQUEUE_MAX}},		/*  18, _SC_SIGQUEUE_MAX */
+   {cons, {c:TIMER_MAX}},		/*  19, _SC_TIMER_MAX */
+-  {nsup, {c:0}},			/*  20, _SC_TZNAME_MAX */
++  {cons, {c:-1L}},			/*  20, _SC_TZNAME_MAX */
+   {cons, {c:_POSIX_ASYNCHRONOUS_IO}},	/*  21, _SC_ASYNCHRONOUS_IO */
+   {cons, {c:_POSIX_FSYNC}},		/*  22, _SC_FSYNC */
+   {cons, {c:_POSIX_MAPPED_FILES}},	/*  23, _SC_MAPPED_FILES */
+-- 
+2.9.0
+

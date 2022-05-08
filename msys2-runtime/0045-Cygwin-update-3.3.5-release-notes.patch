@@ -1,0 +1,32 @@
+From e8a47d63bdd5f874bb3e4f3fd45a88d957bf458d Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sat, 5 Mar 2022 18:21:09 +0900
+Subject: [PATCH 045/N] Cygwin: update 3.3.5 release notes
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/release/3.3.5 | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/winsup/cygwin/release/3.3.5 b/winsup/cygwin/release/3.3.5
+index 11698c4..ce7a212 100644
+--- a/winsup/cygwin/release/3.3.5
++++ b/winsup/cygwin/release/3.3.5
+@@ -23,6 +23,14 @@ Bug Fixes
+   Addresses:
+   https://github.com/GitCredentialManager/git-credential-manager/issues/576
+ 
++- Fix some problems such as:
++   1) If output of non-cygwin app and input of cygwin app are connected
++      by a pipe, Ctrl-C has to be sent twice to stop apps when the
++      cygwin app does not read stdin at the moment.
++   2) In cmd.exe started from cygwin shell, if output of non-cygwin
++      app and input of cygwin app are connected by a pipe, Ctrl-C
++      can never terminate the apps.
++
+ - Fix exit code when non-cygwin app is terminated by Ctrl-C.
+ 
+ - Fix a bug that the order of the console key inputs are occasionally
+-- 
+2.9.0
+

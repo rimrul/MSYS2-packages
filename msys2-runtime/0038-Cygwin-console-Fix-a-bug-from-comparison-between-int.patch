@@ -1,0 +1,27 @@
+From a022e3bf0f39adceac4244d5b242012244ae954a Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Wed, 2 Mar 2022 11:08:27 +0900
+Subject: [PATCH 038/N] Cygwin: console: Fix a bug from comparison between
+ int and DWORD.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_console.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/fhandler_console.cc b/winsup/cygwin/fhandler_console.cc
+index 4724851..5840e55 100644
+--- a/winsup/cygwin/fhandler_console.cc
++++ b/winsup/cygwin/fhandler_console.cc
+@@ -1272,7 +1272,7 @@ out:
+     {
+       DWORD discarded;
+       ReadConsoleInputW (get_handle (), input_rec, discard_len, &discarded);
+-      con.num_processed = max (con.num_processed - discarded, 0);
++      con.num_processed -= min (con.num_processed, discarded);
+     }
+   return stat;
+ }
+-- 
+2.9.0
+

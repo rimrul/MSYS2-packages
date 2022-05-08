@@ -1,0 +1,70 @@
+From 61c3e3d372f673522572e70a41df46eeb115825d Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Thu, 10 Mar 2022 20:20:00 +0900
+Subject: [PATCH 046/N] Cygwin: console, pty: Fix segfault in
+ child_info_spawn::worker().
+
+- After the commit "Cygwin: pty, console: Fix handle leak which
+  occurs on exec() error.", startxwin cannot start X due to the
+  error "Failed to activate virtual core keyboard: 2". The problem
+  is access violation in the code retrieving the pgid of the ctty.
+  This patch fixes the issue.
+
+  Addresses: https://cygwin.com/pipermail/cygwin/2022-March/251013.html
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler.h | 8 ++++++--
+ winsup/cygwin/spawn.cc   | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/winsup/cygwin/fhandler.h b/winsup/cygwin/fhandler.h
+index 18bc694..3fe1274 100644
+--- a/winsup/cygwin/fhandler.h
++++ b/winsup/cygwin/fhandler.h
+@@ -1915,6 +1915,7 @@ class fhandler_termios: public fhandler_base
+   };
+ 
+  public:
++  virtual pid_t tc_getpgid () { return 0; };
+   tty_min*& tc () {return _tc;}
+   fhandler_termios () :
+   fhandler_base ()
+@@ -2158,9 +2159,10 @@ private:
+ 			       const handle_set_t *p);
+ 
+  public:
+-  static pid_t tc_getpgid ()
++  pid_t tc_getpgid ()
+   {
+-    return shared_console_info ? shared_console_info->tty_min_state.getpgid () : myself->pgid;
++    return shared_console_info ?
++      shared_console_info->tty_min_state.getpgid () : 0;
+   }
+   fhandler_console (fh_devices);
+   static console_state *open_shared_console (HWND hw, HANDLE& h)
+@@ -2341,6 +2343,8 @@ class fhandler_pty_slave: public fhandler_pty_common
+   void fch_close_handles ();
+ 
+  public:
++  pid_t tc_getpgid () { return _tc ? _tc->pgid : 0; }
++
+   struct handle_set_t
+   {
+     HANDLE from_master_nat;
+diff --git a/winsup/cygwin/spawn.cc b/winsup/cygwin/spawn.cc
+index 3b54309..fb3d09d 100644
+--- a/winsup/cygwin/spawn.cc
++++ b/winsup/cygwin/spawn.cc
+@@ -564,7 +564,7 @@ child_info_spawn::worker (const char *prog_arg, const char *const *argv,
+ 	 because the Ctrl-C event is sent to all processes in the console, unless
+ 	 they ignore it explicitely.  CREATE_NEW_PROCESS_GROUP does that for us. */
+       pid_t ctty_pgid =
+-	::cygheap->ctty ? ::cygheap->ctty->tc ()->getpgid () : 0;
++	::cygheap->ctty ? ::cygheap->ctty->tc_getpgid () : 0;
+       if (!iscygwin () && ctty_pgid && ctty_pgid != myself->pgid)
+ 	c_flags |= CREATE_NEW_PROCESS_GROUP;
+       refresh_cygheap ();
+-- 
+2.9.0
+

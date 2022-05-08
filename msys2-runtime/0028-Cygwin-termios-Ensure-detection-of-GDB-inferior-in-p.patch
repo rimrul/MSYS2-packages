@@ -1,0 +1,76 @@
+From 236f83750cfa0b9ecc0b22f643d193dc8796afdf Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Mon, 28 Feb 2022 07:24:45 +0900
+Subject: [PATCH 028/N] Cygwin: termios: Ensure detection of GDB inferior in
+ process_sigs().
+
+- In some situations, some cygwin processes might wrongly identified
+  as GDB inferior. This patch ensures the detection of GDB inferior.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_termios.cc  | 12 ++++++------
+ winsup/cygwin/include/sys/cygwin.h |  1 +
+ winsup/cygwin/pinfo.cc             |  2 ++
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/winsup/cygwin/fhandler_termios.cc b/winsup/cygwin/fhandler_termios.cc
+index f82ac76..028210d 100644
+--- a/winsup/cygwin/fhandler_termios.cc
++++ b/winsup/cygwin/fhandler_termios.cc
+@@ -345,7 +345,8 @@ fhandler_termios::process_sigs (char c, tty* ttyp, fhandler_termios *fh)
+ 		     without pcon enabled. In this case, the inferior is not
+ 		     cygwin process list. PID_NEW_PG is set as a marker for
+ 		     GDB with non-cygwin inferior in pty code.
+-	 !PID_CYGPARENT: check this for GDB with cygwin inferior. */
++	 !PID_CYGPARENT: check this for GDB with cygwin inferior or
++			 cygwin apps started from non-cygwin shell. */
+       if (c == '\003' && p && p->ctty == ttyp->ntty && p->pgid == pgid
+ 	  && ((p->process_state & PID_NOTCYGWIN)
+ 	      || (p->process_state & PID_NEW_PG)
+@@ -408,13 +409,12 @@ fhandler_termios::process_sigs (char c, tty* ttyp, fhandler_termios *fh)
+ 	  if (p->process_state & PID_TTYIN)
+ 	    cyg_reader = true; /* Theh process is reading the tty */
+ 	  if (!p->cygstarted && !(p->process_state & PID_NOTCYGWIN)
+-	      && (p != myself || being_debugged ())
+-	      && cyg_leader) /* inferior is cygwin app */
+-	    with_debugger = true;
++	      && (p->process_state & PID_DEBUGGED))
++	    with_debugger = true; /* inferior is cygwin app */
+ 	  if (!(p->process_state & PID_NOTCYGWIN)
+ 	      && (p->process_state & PID_NEW_PG) /* Check marker */
+-	      && p->pid == pgid) /* inferior is non-cygwin app */
+-	    with_debugger_nat = true;
++	      && p->pid == pgid)
++	    with_debugger_nat = true; /* inferior is non-cygwin app */
+ 	}
+     }
+   if ((with_debugger || with_debugger_nat) && need_discard_input)
+diff --git a/winsup/cygwin/include/sys/cygwin.h b/winsup/cygwin/include/sys/cygwin.h
+index ac55ab0..c9d4599 100644
+--- a/winsup/cygwin/include/sys/cygwin.h
++++ b/winsup/cygwin/include/sys/cygwin.h
+@@ -276,6 +276,7 @@ enum
+   PID_PROCINFO	       = 0x08000, /* caller just asks for process info */
+   PID_NEW_PG	       = 0x10000, /* Process created with
+ 				     CREATE_NEW_PROCESS_GROUOP flag */
++  PID_DEBUGGED	       = 0x20000, /* Process being debugged */
+   PID_EXITED	       = 0x40000000, /* Free entry. */
+   PID_REAPED	       = 0x80000000  /* Reaped */
+ };
+diff --git a/winsup/cygwin/pinfo.cc b/winsup/cygwin/pinfo.cc
+index bb7c165..5e04ea3 100644
+--- a/winsup/cygwin/pinfo.cc
++++ b/winsup/cygwin/pinfo.cc
+@@ -106,6 +106,8 @@ pinfo_init (char **envp, int envc)
+ 
+   myself->process_state |= PID_ACTIVE;
+   myself->process_state &= ~(PID_INITIALIZING | PID_EXITED | PID_REAPED);
++  if (being_debugged ())
++    myself->process_state |= PID_DEBUGGED;
+   myself.preserve ();
+   debug_printf ("pid %d, pgid %d, process_state %y",
+ 		myself->pid, myself->pgid, myself->process_state);
+-- 
+2.9.0
+

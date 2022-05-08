@@ -1,0 +1,31 @@
+From 679005b1af7faf6a96b45813e7c0930289f45702 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sat, 12 Mar 2022 06:19:53 +0900
+Subject: [PATCH 047/N] Cygwin: fsync: Return EINVAL for special files.
+
+- Unlike linux, fsync() calls FlushFileBuffers() even for special
+  files. This causes the problem reported in:
+    https://cygwin.com/pipermail/cygwin/2022-March/251022.html
+  This patch fixes the issue.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/fhandler.cc b/winsup/cygwin/fhandler.cc
+index 98d7a3b..fc7bf0a 100644
+--- a/winsup/cygwin/fhandler.cc
++++ b/winsup/cygwin/fhandler.cc
+@@ -1750,7 +1750,7 @@ fhandler_base::utimens (const struct timespec *tvp)
+ int
+ fhandler_base::fsync ()
+ {
+-  if (!get_handle () || nohandle ())
++  if (!get_handle () || nohandle () || pc.isspecial ())
+     {
+       set_errno (EINVAL);
+       return -1;
+-- 
+2.9.0
+

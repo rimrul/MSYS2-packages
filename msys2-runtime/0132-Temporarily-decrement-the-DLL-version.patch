@@ -1,0 +1,29 @@
+From df18b6b1f849d0934f6836b9c37d68bc91313ad8 Mon Sep 17 00:00:00 2001
+From: Johannes Schindelin <johannes.schindelin@gmx.de>
+Date: Sun, 8 May 2022 18:22:14 +0200
+Subject: [PATCH 132/N] Temporarily decrement the DLL version
+
+Since this does _not_ reflect Cygwin v3.3.5, in this merge commit, we
+also decrement the DLL version to v3.3.4 again.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/include/cygwin/version.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/include/cygwin/version.h b/winsup/cygwin/include/cygwin/version.h
+index ba645e4..d783447 100644
+--- a/winsup/cygwin/include/cygwin/version.h
++++ b/winsup/cygwin/include/cygwin/version.h
+@@ -11,7 +11,7 @@ details. */
+    changes to the DLL and is mainly informative in nature. */
+ 
+ #define CYGWIN_VERSION_DLL_MAJOR 3003
+-#define CYGWIN_VERSION_DLL_MINOR 5
++#define CYGWIN_VERSION_DLL_MINOR 4
+ 
+ /* Major numbers before CYGWIN_VERSION_DLL_EPOCH are incompatible. */
+ 
+-- 
+2.9.0
+

@@ -1,0 +1,45 @@
+From bd0d78870255fc3859ed6aba0ed1d578b8640b63 Mon Sep 17 00:00:00 2001
+From: Corinna Vinschen <corinna@vinschen.de>
+Date: Tue, 1 Mar 2022 14:09:56 +0100
+Subject: [PATCH 035/N] Cygwin: handle_sigprocmask: If new signal set is
+ NULL, ignore "how"
+
+The "how" value only makes sense if a new set is given.  If we
+only read the current signal set, ignore the value of "how" per
+POSIX:
+
+"If set is a null pointer, the value of the argument how is not
+significant"
+
+Signed-off-by: Corinna Vinschen <corinna@vinschen.de>
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/signal.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/winsup/cygwin/signal.cc b/winsup/cygwin/signal.cc
+index 2cf750f..9b6c250 100644
+--- a/winsup/cygwin/signal.cc
++++ b/winsup/cygwin/signal.cc
+@@ -205,15 +205,15 @@ sigprocmask (int how, const sigset_t *set, sigset_t *oldset)
+ int __reg3
+ handle_sigprocmask (int how, const sigset_t *set, sigset_t *oldset, sigset_t& opmask)
+ {
+-  /* check that how is in right range */
+-  if (how != SIG_BLOCK && how != SIG_UNBLOCK && how != SIG_SETMASK)
++  /* check that how is in right range if set is not NULL */
++  if (set && how != SIG_BLOCK && how != SIG_UNBLOCK && how != SIG_SETMASK)
+     {
+       syscall_printf ("Invalid how value %d", how);
+       return EINVAL;
+     }
+ 
+   __try
+-	{
++    {
+       if (oldset)
+ 	*oldset = opmask;
+ 
+-- 
+2.9.0
+

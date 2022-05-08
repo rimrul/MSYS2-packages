@@ -1,0 +1,37 @@
+From c6527a8dc106ae11179eebcf362d46a476a5b74d Mon Sep 17 00:00:00 2001
+From: Jon Turney <jon.turney@dronecode.org.uk>
+Date: Tue, 12 Apr 2022 11:48:54 +0100
+Subject: [PATCH 064/N] Cygwin: Fix typo KERB_S4U_LOGON_FLAG_IDENTITY ->
+ IDENTIFY
+
+(cherry picked from commit 01c734b0d7c1ce0f848f7efc091856c58a6ef55e)
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/sec_auth.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/winsup/cygwin/sec_auth.cc b/winsup/cygwin/sec_auth.cc
+index 9559096..e44b70b 100644
+--- a/winsup/cygwin/sec_auth.cc
++++ b/winsup/cygwin/sec_auth.cc
+@@ -1490,7 +1490,7 @@ typedef struct _MSV1_0_S4U_LOGON
+ } MSV1_0_S4U_LOGON, *PMSV1_0_S4U_LOGON;
+ 
+ /* Missing in Mingw-w64 */
+-#define KERB_S4U_LOGON_FLAG_IDENTITY 0x08
++#define KERB_S4U_LOGON_FLAG_IDENTIFY 0x08
+ 
+ #endif
+ 
+@@ -1611,7 +1611,7 @@ s4uauth (bool logon, PCWSTR domain, PCWSTR user, NTSTATUS &ret_status)
+       RtlSecureZeroMemory (authinf, authinf_size);
+       s4u_logon = (KERB_S4U_LOGON *) authinf;
+       s4u_logon->MessageType = KerbS4ULogon;
+-      s4u_logon->Flags = logon ? 0 : KERB_S4U_LOGON_FLAG_IDENTITY;
++      s4u_logon->Flags = logon ? 0 : KERB_S4U_LOGON_FLAG_IDENTIFY;
+       /* Append user to login info */
+       RtlInitEmptyUnicodeString (&s4u_logon->ClientUpn,
+ 				 (PWCHAR) (s4u_logon + 1),
+-- 
+2.9.0
+

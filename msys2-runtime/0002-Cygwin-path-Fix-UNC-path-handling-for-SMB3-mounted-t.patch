@@ -1,0 +1,44 @@
+From 6b5d2a822c077292be5801b969af0f2fc400c259 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Thu, 3 Feb 2022 12:00:14 +0900
+Subject: [PATCH 002/N] Cygwin: path: Fix UNC path handling for SMB3 mounted
+ to a drive.
+
+- If an UNC path is mounted to a drive using SMB3.11, accessing to
+  the drive fails with error "Too many levels of symbolic links."
+  This patch fixes the issue.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/path.cc | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/winsup/cygwin/path.cc b/winsup/cygwin/path.cc
+index 87ac240..4ad4e08 100644
+--- a/winsup/cygwin/path.cc
++++ b/winsup/cygwin/path.cc
+@@ -3495,10 +3495,19 @@ restart:
+ 
+ 	      /* If incoming path has no trailing backslash, but final path
+ 		 has one, drop trailing backslash from final path so the
+-		 below string comparison has a chance to succeed. */
++		 below string comparison has a chance to succeed.
++		 On the contrary, if incoming path has trailing backslash,
++		 but final path does not have one, add trailing backslash
++		 to the final path. */
+ 	      if (upath.Buffer[(upath.Length - 1) / sizeof (WCHAR)] != L'\\'
+-                  && fpbuf[ret - 1] == L'\\')
++		  && fpbuf[ret - 1] == L'\\')
+                 fpbuf[--ret] = L'\0';
++	      if (upath.Buffer[(upath.Length - 1) / sizeof (WCHAR)] == L'\\'
++		  && fpbuf[ret - 1] != L'\\' && ret < NT_MAX_PATH - 1)
++		{
++		  fpbuf[ret++] = L'\\';
++		  fpbuf[ret] = L'\0';
++		}
+ 	      fpbuf[1] = L'?';	/* \\?\ --> \??\ */
+ 	      RtlInitCountedUnicodeString (&fpath, fpbuf, ret * sizeof (WCHAR));
+ 	      if (!RtlEqualUnicodeString (&upath, &fpath, !!ci_flag))
+-- 
+2.9.0
+

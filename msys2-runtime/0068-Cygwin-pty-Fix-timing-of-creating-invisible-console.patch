@@ -1,0 +1,39 @@
+From bf973e2bc5c57b1d4ba9d5bf0c91dade4d171cba Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sun, 8 May 2022 18:16:17 +0900
+Subject: [PATCH 068/N] Cygwin: pty: Fix timing of creating invisible
+ console.
+
+- Previously, invisible console was created in fixup_after_exec().
+  However, actually this should be done in fixup_after_fork(). this
+  patch fixes the issue.
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_tty.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/fhandler_tty.cc b/winsup/cygwin/fhandler_tty.cc
+index b9cc973..b419cbd 100644
+--- a/winsup/cygwin/fhandler_tty.cc
++++ b/winsup/cygwin/fhandler_tty.cc
+@@ -2518,6 +2518,8 @@ fhandler_pty_slave::setup_locale (void)
+ void
+ fhandler_pty_slave::fixup_after_fork (HANDLE parent)
+ {
++  create_invisible_console ();
++
+   // fork_fixup (parent, inuse, "inuse");
+   // fhandler_pty_common::fixup_after_fork (parent);
+   report_tty_counts (this, "inherited", "");
+@@ -2527,7 +2529,6 @@ void
+ fhandler_pty_slave::fixup_after_exec ()
+ {
+   reset_switch_to_pcon ();
+-  create_invisible_console ();
+ 
+   if (!close_on_exec ())
+     fixup_after_fork (NULL);	/* No parent handle required. */
+-- 
+2.9.0
+

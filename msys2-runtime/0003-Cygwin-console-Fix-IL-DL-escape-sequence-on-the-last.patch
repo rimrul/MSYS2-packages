@@ -1,0 +1,50 @@
+From 8becb2525c6885ffaf02d9a65ee3c479d06b6c9f Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Thu, 3 Feb 2022 21:09:44 +0900
+Subject: [PATCH 003/N] Cygwin: console: Fix IL/DL escape sequence on the
+ last line.
+
+- Currently, escape sequence IL/DL (CSI Ps L, CSI Ps M) does not
+  work correctly at the last (bottom end) line. This patch fixes
+  the issue.
+
+Addresses:
+  https://cygwin.com/pipermail/cygwin/2022-February/250736.html
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/fhandler_console.cc | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/winsup/cygwin/fhandler_console.cc b/winsup/cygwin/fhandler_console.cc
+index da1d2e8..65325ad 100644
+--- a/winsup/cygwin/fhandler_console.cc
++++ b/winsup/cygwin/fhandler_console.cc
+@@ -2174,6 +2174,12 @@ fhandler_console::char_command (char c)
+ 	      cursor_get (&x, &y);
+ 	      if (y < srTop || y > srBottom)
+ 		break;
++	      if (y == con.b.srWindow.Bottom)
++		{
++		  WriteConsoleW (get_output_handle (), L"\033[2K", 4, 0, 0);
++		  wpbuf.empty ();
++		  break;
++		}
+ 	      if (y == con.b.srWindow.Top
+ 		  && srBottom == con.b.srWindow.Bottom)
+ 		{
+@@ -2213,6 +2219,12 @@ fhandler_console::char_command (char c)
+ 	      cursor_get (&x, &y);
+ 	      if (y < srTop || y > srBottom)
+ 		break;
++	      if (y == con.b.srWindow.Bottom)
++		{
++		  WriteConsoleW (get_output_handle (), L"\033[2K", 4, 0, 0);
++		  wpbuf.empty ();
++		  break;
++		}
+ 	      __small_swprintf (bufw, L"\033[%d;%dr",
+ 				y + 1 - con.b.srWindow.Top,
+ 				srBottom + 1 - con.b.srWindow.Top);
+-- 
+2.9.0
+
