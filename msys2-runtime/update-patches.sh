@@ -56,8 +56,8 @@ die "Could not stage new patch set"
 
 in_sources="$(echo "$patches" | sed "{s/^/        /;:1;N;s/\\n/\\\\n        /;b1}")"
 in_prepare="$(echo "$patches" |
-	sed "{s|^|  git am --committer-date-is-author-date \"\${srcdir}\"/|;:1;N;
-	 s|\\n|\\\\n  git am --committer-date-is-author-date \"\${srcdir}\"/|;b1}")"
+	sed "{s|^|  git am --committer-date-is-author-date --ignore-space-change \"\${srcdir}\"/|;:1;N;
+	 s|\\n|\\\\n  git am --committer-date-is-author-date --ignore-space-change \"\${srcdir}\"/|;b1}")"
 sed -i -e "/^        0.*\.patch$/{:1;N;/[^)]$/b1;s|.*|$in_sources)|}" \
 	-e "/^  git am.*\.patch$/{:2;N;/[^}]$/b2;s|.*|$in_prepare\\n\\}|}" \
 	PKGBUILD ||
