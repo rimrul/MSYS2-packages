@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.3.4
-pkgrel=3
+pkgrel=4
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -156,7 +156,8 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0129-Use-MB_CUR_MAX-6-by-default.patch
         0130-Implicitly-support-the-dev-fd-symlink-and-friends.patch
         0131-Do-not-try-to-sync-with-Cygwin.patch
-        0132-Temporarily-decrement-the-DLL-version.patch)
+        0132-Temporarily-decrement-the-DLL-version.patch
+        0133-Cygwin-pty-Not-to-change-code-page-of-parent-console.patch)
 sha256sums=('SKIP'
             '3cae3313d1014ecb74e81c99291c8cd36613a22bfd59253c9e15e0b9459d71db'
             '7301f88b5ccfe21ea8c050a859d406f72d1803e57179c6bc114bcf43c1e360ad'
@@ -289,7 +290,8 @@ sha256sums=('SKIP'
             '33a71dc5b6fa070276a57f63700707b384e09b98c48ca499fce551449baccab8'
             'ea4e8e8925190b59364bff947a22383cd85afbaf3203dafd4339b88cd3a1a02c'
             '2eb4957e645388156e6261a8559f8756d46d0ad136b6e4c7a6f5b0af0c6f601c'
-            '8388cf220171daac7194d3f893edfafa617cdf1ef31cfcae67a4a7e12cd951da')
+            '8388cf220171daac7194d3f893edfafa617cdf1ef31cfcae67a4a7e12cd951da'
+            '95891dd5ad8effd6196ce9d3c0dd451ed22f5d0bacc24d96c0877f824a96f68b')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -448,6 +450,7 @@ prepare() {
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0130-Implicitly-support-the-dev-fd-symlink-and-friends.patch
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0131-Do-not-try-to-sync-with-Cygwin.patch
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0132-Temporarily-decrement-the-DLL-version.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0133-Cygwin-pty-Not-to-change-code-page-of-parent-console.patch
 }
 
 build() {
