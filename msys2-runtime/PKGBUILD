@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.3.5
-pkgrel=1
+pkgrel=2
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -86,7 +86,22 @@ source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-$
         0059-Use-MB_CUR_MAX-6-by-default.patch
         0060-Change-the-default-base-address-for-x86_64.patch
         0061-Do-not-try-to-sync-with-Cygwin.patch
-        0062-Temporarily-decrement-the-DLL-version.patch)
+        0062-Temporarily-decrement-the-DLL-version.patch
+        0063-fixup-Temporarily-decrement-the-DLL-version.patch
+        0064-Cygwin-pty-Fix-script-command-crash-on-console-in-Wi.patch
+        0065-Cygwin-belatedly-bump-DLL-version-to-3.3.6.patch
+        0066-Cygwin-add-3.3.6-release-notes.patch
+        0067-Cygwin-make-sure-exec-ed-process-exists-early-in-pro.patch
+        0068-Cygwin-fix-mknod-64-bit-only.patch
+        0069-Cygwin-cygheap-Fix-the-issue-of-cygwin1.dll-in-the-r.patch
+        0070-Cygwin-document-last-bug-fix.patch
+        0071-Cygwin-console-Retain-ENABLE_VIRTUAL_TERMIANL_PROCES.patch
+        0072-Cygwin-console-Handle-setting-very-long-window-title.patch
+        0073-Cygwin-poll-Fix-a-bug-on-inquiring-same-fd-with-diff.patch
+        0074-Cygwin-console-Allow-pasting-very-long-text-input.patch
+        0075-Cygwin-console-Fix-new-bugs-in-cons_master_thread.patch
+        0076-Cygwin-console-Fix-issue-of-pasting-very-long-text-i.patch
+        0077-fixup-Temporarily-decrement-the-DLL-version.patch)
 sha256sums=('SKIP'
             'd4a64a1964ef318c5fe14103ded56040f0d424170cb5bd2d52f5d916e7d168ee'
             '9a2a7ba152a804ea0d077fd43783813cc9cbd1be36d57002d493e66ed45a8604'
@@ -149,7 +164,22 @@ sha256sums=('SKIP'
             '0991c7539395d942aab7fb5c45900d7b313344a203061133e8826e430eb672e6'
             '48881112377975517813191b69e7ef5cba1f3bfa676614515dbf393fc869980d'
             '089019abe061fc9d5ec93a205873ede268a399d8a1ab539664529cdaddef68ed'
-            '04378e9e66a1499173790cd1bf39934b185d82215f642a582f12101c419c6911')
+            '04378e9e66a1499173790cd1bf39934b185d82215f642a582f12101c419c6911'
+            'b4c3bf412425684ac600d6196644038fdafe1a5340d4ba214092251190c68c3d'
+            '4bf781dba2c3a630e6602c693cec5d5b83364fc63d6456ff2eaab6fb7cd9b3c6'
+            'ff2cc8b114298acb8fe596d6f5c7e6470b6ad9d1f2d1b6bfb22ceb10c51b968e'
+            '5b7b1304aac3cea7d18b6501dc1834052870b00b7bd3cd4ac32c7c534d780a7f'
+            'e522db0637c88f8e94039c0d079258d58207eb3dea830b97a130c1139d2c4259'
+            'dcb1cbf6ac9b543f2a260f59ba9ba08e962dc3cb1fe8489e8363ddecd51e2003'
+            '9b98900736bca2c8056160cdd923fae07dba9ccca41f8ce8e61a0d8d7cfe2cac'
+            '43fddba05b3cd331a3a229d900619fb89efa7863290fd03944f9e6f491909dcf'
+            'ba611e7fe75e03a1d64e5b8f0bb241c43c69fae49cfc0fdfa76867fd5e3db77a'
+            'fef2f92f2cc51795bc71417c1b44246d7e3137cac4c024b94b607f3f3e30da7f'
+            'b80ee84909b55ef7be5afeec11c8ad45c36027db4208a3eca1d9bfdc6f7c4c33'
+            '1c248d7a07205851055f50686da739c8cb5a24b3c494097cc63033cdcbb26fa4'
+            'ee86c386dd030de0052091c39d74537f8cf4b459281388f8c68baa2a54b95ff6'
+            'eb412691b5ddf856ccbba44586140f985fcab1b79385f8816d5b7b15d61d4560'
+            '1494db04b61818b7a6cf1d9db0d76efea4fc91a4500a20ad8ebedc0a1729db0c')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -238,6 +268,21 @@ prepare() {
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0060-Change-the-default-base-address-for-x86_64.patch
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0061-Do-not-try-to-sync-with-Cygwin.patch
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0062-Temporarily-decrement-the-DLL-version.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0063-fixup-Temporarily-decrement-the-DLL-version.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0064-Cygwin-pty-Fix-script-command-crash-on-console-in-Wi.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0065-Cygwin-belatedly-bump-DLL-version-to-3.3.6.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0066-Cygwin-add-3.3.6-release-notes.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0067-Cygwin-make-sure-exec-ed-process-exists-early-in-pro.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0068-Cygwin-fix-mknod-64-bit-only.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0069-Cygwin-cygheap-Fix-the-issue-of-cygwin1.dll-in-the-r.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0070-Cygwin-document-last-bug-fix.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0071-Cygwin-console-Retain-ENABLE_VIRTUAL_TERMIANL_PROCES.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0072-Cygwin-console-Handle-setting-very-long-window-title.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0073-Cygwin-poll-Fix-a-bug-on-inquiring-same-fd-with-diff.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0074-Cygwin-console-Allow-pasting-very-long-text-input.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0075-Cygwin-console-Fix-new-bugs-in-cons_master_thread.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0076-Cygwin-console-Fix-issue-of-pasting-very-long-text-i.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0077-fixup-Temporarily-decrement-the-DLL-version.patch
 }
 
 build() {

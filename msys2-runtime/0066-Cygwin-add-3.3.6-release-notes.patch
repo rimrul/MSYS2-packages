@@ -1,0 +1,24 @@
+From ea243efe235e28f4782fb6f5cf3e99048f82fc05 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Mon, 16 May 2022 20:10:23 +0900
+Subject: [PATCH 66/N] Cygwin: add 3.3.6 release notes
+
+---
+ winsup/cygwin/release/3.3.6 | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 winsup/cygwin/release/3.3.6
+
+diff --git a/winsup/cygwin/release/3.3.6 b/winsup/cygwin/release/3.3.6
+new file mode 100644
+index 0000000..6d1f0bc
+--- /dev/null
++++ b/winsup/cygwin/release/3.3.6
+@@ -0,0 +1,5 @@
++Bug Fixes
++---------
++
++- Fix an issue that command "cmd /c script -c cmd" crashes if it
++  is issued in console of Windows 7.
+-- 
+2.9.0
+

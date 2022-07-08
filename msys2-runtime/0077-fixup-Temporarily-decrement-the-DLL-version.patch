@@ -1,0 +1,32 @@
+From 5f211cb706bdb697e012528a3287a3e8c395609a Mon Sep 17 00:00:00 2001
+From: Johannes Schindelin <johannes.schindelin@gmx.de>
+Date: Sun, 8 May 2022 18:22:14 +0200
+Subject: [PATCH 77/N] fixup! Temporarily decrement the DLL version
+
+Let's decrement the DLL version again because the `cygwin-3_3-branch`
+tip claims to carry version v3.3.6 in anticipation of that version, but
+it is of course not that version yet.
+
+Hopefully I won't forget to drop this patch when rebasing to v3.3.6 ;-)
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/include/cygwin/version.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/include/cygwin/version.h b/winsup/cygwin/include/cygwin/version.h
+index e6ae517..ba645e4 100644
+--- a/winsup/cygwin/include/cygwin/version.h
++++ b/winsup/cygwin/include/cygwin/version.h
+@@ -11,7 +11,7 @@ details. */
+    changes to the DLL and is mainly informative in nature. */
+ 
+ #define CYGWIN_VERSION_DLL_MAJOR 3003
+-#define CYGWIN_VERSION_DLL_MINOR 6
++#define CYGWIN_VERSION_DLL_MINOR 5
+ 
+ /* Major numbers before CYGWIN_VERSION_DLL_EPOCH are incompatible. */
+ 
+-- 
+2.9.0
+

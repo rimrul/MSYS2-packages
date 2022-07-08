@@ -1,0 +1,52 @@
+From e4fdb0cb73cc48a2db473b525b6ba0a33ecabf97 Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Tue, 14 Jun 2022 21:01:58 +0900
+Subject: [PATCH 71/N] Cygwin: console: Retain
+ ENABLE_VIRTUAL_TERMIANL_PROCESSING flag.
+
+- Currently, ENABLE_VIRTUAL_TERMINAL_PROCESSING flag is disabled
+  unconditionally when exiting from cygwin. This causes ANSI escape
+  sequence disabled in Windows Terminal where it is enables by
+  default. This patch retains that flag if it is originally enabled.
+---
+ winsup/cygwin/fhandler.h          | 1 +
+ winsup/cygwin/fhandler_console.cc | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/winsup/cygwin/fhandler.h b/winsup/cygwin/fhandler.h
+index 2ff99ae..9940da7 100644
+--- a/winsup/cygwin/fhandler.h
++++ b/winsup/cygwin/fhandler.h
+@@ -2021,6 +2021,7 @@ class dev_console
+ {
+   pid_t owner;
+   bool is_legacy;
++  bool orig_virtual_terminal_processing_mode;
+ 
+   WORD default_color, underline_color, dim_color;
+ 
+diff --git a/winsup/cygwin/fhandler_console.cc b/winsup/cygwin/fhandler_console.cc
+index e848236..5adf0b8 100644
+--- a/winsup/cygwin/fhandler_console.cc
++++ b/winsup/cygwin/fhandler_console.cc
+@@ -596,6 +596,8 @@ fhandler_console::set_output_mode (tty::cons_mode m, const termios *t,
+ 				   const handle_set_t *p)
+ {
+   DWORD flags = ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT;
++  if (con.orig_virtual_terminal_processing_mode)
++    flags |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+   WaitForSingleObject (p->output_mutex, mutex_timeout);
+   switch (m)
+     {
+@@ -1503,6 +1505,8 @@ fhandler_console::open (int flags, mode_t)
+       /* Check xterm compatible mode in output */
+       acquire_attach_mutex (mutex_timeout);
+       GetConsoleMode (get_output_handle (), &dwMode);
++      con.orig_virtual_terminal_processing_mode =
++	!!(dwMode & ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+       if (!SetConsoleMode (get_output_handle (),
+ 			   dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+ 	is_legacy = true;
+-- 
+2.9.0
+

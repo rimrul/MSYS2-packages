@@ -1,0 +1,32 @@
+From dda2f89eb4eb74215085084e1f3ae8d4ad850d6d Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Fri, 27 May 2022 21:54:36 +0900
+Subject: [PATCH 69/N] Cygwin: cygheap: Fix the issue of cygwin1.dll in the
+ root directory.
+
+- After the commit 6d898f43, cygwin fails to start if cygwin1.dll
+  is placed in the root directory. This patch fixes the issue.
+Addresses: https://cygwin.com/pipermail/cygwin/2022-May/251548.html
+---
+ winsup/cygwin/cygheap.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/winsup/cygwin/cygheap.cc b/winsup/cygwin/cygheap.cc
+index 01b4946..79300a3 100644
+--- a/winsup/cygwin/cygheap.cc
++++ b/winsup/cygwin/cygheap.cc
+@@ -183,6 +183,11 @@ init_cygheap::init_installation_root ()
+ 	  if (p)
+ 	    p = wcschr (p + 1, L'\\');  /* Skip share name */
+ 	}
++      else /* Long path prefix followed by drive letter path */
++	{
++	  len = 4;
++	  p += 4;
++	}
+     }
+   installation_root_buf[1] = L'?';
+   RtlInitEmptyUnicodeString (&installation_key, installation_key_buf,
+-- 
+2.9.0
+

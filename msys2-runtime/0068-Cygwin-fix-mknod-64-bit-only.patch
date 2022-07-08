@@ -1,0 +1,51 @@
+From 807318b6eeb127b8e62d9a170aa61639bb8571b4 Mon Sep 17 00:00:00 2001
+From: Ken Brown <kbrown@cornell.edu>
+Date: Sun, 22 May 2022 11:43:44 -0400
+Subject: [PATCH 68/N] Cygwin: fix mknod (64-bit only)
+
+The current definition of mknod in syscalls.cc has a third argument of
+type __dev16_t instead of dev_t.  Fix this on 64-bit Cygwin by making
+the existing mknod 32-bit only and then exporting mknod as an alias
+for mknod32.  (No fix is needed on 32-bit because mknod is redirected
+to mknod32 via NEW_FUNCTIONS in Makefile.am.)
+
+Addresses: https://cygwin.com/pipermail/cygwin-developers/2022-May/012589.html
+---
+ winsup/cygwin/release/3.3.6 | 3 +++
+ winsup/cygwin/syscalls.cc   | 4 ++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/winsup/cygwin/release/3.3.6 b/winsup/cygwin/release/3.3.6
+index 6d72243..135f331 100644
+--- a/winsup/cygwin/release/3.3.6
++++ b/winsup/cygwin/release/3.3.6
+@@ -7,3 +7,6 @@ Bug Fixes
+ - Fix killpg failing because the exec'ing as well as the exec'ed
+   process are not in the pidlist for a brief moment.
+   Addresses: https://cygwin.com/pipermail/cygwin/2022-May/251479.html
++
++- Fix mknod (64-bit only), whose definition didn't match its prototype.
++  Addresses: https://cygwin.com/pipermail/cygwin-developers/2022-May/012589.html
+diff --git a/winsup/cygwin/syscalls.cc b/winsup/cygwin/syscalls.cc
+index d431442..03fed03 100644
+--- a/winsup/cygwin/syscalls.cc
++++ b/winsup/cygwin/syscalls.cc
+@@ -3488,11 +3488,15 @@ mknod32 (const char *path, mode_t mode, dev_t dev)
+   return -1;
+ }
+ 
++#ifdef __i386__
+ extern "C" int
+ mknod (const char *_path, mode_t mode, __dev16_t dev)
+ {
+   return mknod32 (_path, mode, (dev_t) dev);
+ }
++#else
++EXPORT_ALIAS (mknod32, mknod)
++#endif
+ 
+ extern "C" int
+ mkfifo (const char *path, mode_t mode)
+-- 
+2.9.0
+

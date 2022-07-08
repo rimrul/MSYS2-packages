@@ -1,0 +1,322 @@
+From 8dde370720b63bc93b88852fadd2f128009c47dc Mon Sep 17 00:00:00 2001
+From: Takashi Yano <takashi.yano@nifty.ne.jp>
+Date: Sat, 14 May 2022 20:35:43 +0900
+Subject: [PATCH 64/N] Cygwin: pty: Fix script command crash on console in
+ Win7.
+
+- Previously, the command "cmd /c script -c cmd" in console of Win7
+  crashes. This seems to be due to a bug (?) of AttachConsole().
+  This patch adds workaround for this issue.
+
+  Currently, pty reattaches to the console of the process which is
+  predetermined by ConsoleProcessList() after temporarily attaching
+  to another console. After that, the console output handle opened
+  with the name "CONOUT$" may not be accessible in Win7 or Vista.
+  This seems to happen when the attached process does not have the
+  same handle even if the console attached is the same. With this
+  patch, cygwin-console-helper which is started when pty master is
+  opened in console, is utilized to be a target process to which
+  pty reattaches if the OS is Win7 or Vista.
+---
+ winsup/cygwin/fhandler.h                    |  6 ++
+ winsup/cygwin/fhandler_termios.cc           |  4 +-
+ winsup/cygwin/fhandler_tty.cc               | 70 ++++++++++++++++++++-
+ winsup/cygwin/wincap.cc                     | 11 ++++
+ winsup/cygwin/wincap.h                      |  2 +
+ winsup/utils/mingw/cygwin-console-helper.cc |  2 +-
+ 6 files changed, 91 insertions(+), 4 deletions(-)
+
+diff --git a/winsup/cygwin/fhandler.h b/winsup/cygwin/fhandler.h
+index 291aa5b..2ff99ae 100644
+--- a/winsup/cygwin/fhandler.h
++++ b/winsup/cygwin/fhandler.h
+@@ -1983,6 +1983,7 @@ class fhandler_termios: public fhandler_base
+   virtual void cleanup_before_exit () {}
+   virtual bool need_console_handler () { return false; }
+   virtual bool need_send_ctrl_c_event () { return true; }
++  virtual DWORD get_helper_pid () { return 0; }
+ };
+ 
+ enum ansi_intensity
+@@ -2466,6 +2467,7 @@ public:
+     HANDLE from_slave_nat;
+     HANDLE output_mutex;
+     tty *ttyp;
++    DWORD helper_pid;
+   };
+ private:
+   int pktmode;			// non-zero if pty in a packet mode.
+@@ -2477,6 +2479,9 @@ private:
+   HANDLE to_master, from_master;
+   cygthread *master_fwd_thread;	// Master forwarding thread
+   HANDLE thread_param_copied_event;
++  HANDLE helper_goodbye;
++  HANDLE helper_h_process;
++  DWORD helper_pid;
+ 
+ public:
+   HANDLE get_echo_handle () const { return echo_r; }
+@@ -2531,6 +2536,7 @@ public:
+   void get_master_fwd_thread_param (master_fwd_thread_param_t *p);
+   void set_mask_flusho (bool m) { get_ttyp ()->mask_flusho = m; }
+   bool need_send_ctrl_c_event ();
++  DWORD get_helper_pid () { return helper_pid; }
+ };
+ 
+ class fhandler_dev_null: public fhandler_base
+diff --git a/winsup/cygwin/fhandler_termios.cc b/winsup/cygwin/fhandler_termios.cc
+index 8dd3805..f4d7493 100644
+--- a/winsup/cygwin/fhandler_termios.cc
++++ b/winsup/cygwin/fhandler_termios.cc
+@@ -359,7 +359,9 @@ fhandler_termios::process_sigs (char c, tty* ttyp, fhandler_termios *fh)
+ 	  acquire_attach_mutex (mutex_timeout);
+ 	  pinfo pinfo_resume = pinfo (myself->ppid);
+ 	  DWORD resume_pid = 0;
+-	  if (pinfo_resume)
++	  if (fh && fh->get_helper_pid ())
++	    resume_pid = fh->get_helper_pid ();
++	  else if (pinfo_resume)
+ 	    resume_pid = pinfo_resume->dwProcessId;
+ 	  else
+ 	    resume_pid = fhandler_pty_common::get_console_process_id
+diff --git a/winsup/cygwin/fhandler_tty.cc b/winsup/cygwin/fhandler_tty.cc
+index 0cd69f3..399b6ef 100644
+--- a/winsup/cygwin/fhandler_tty.cc
++++ b/winsup/cygwin/fhandler_tty.cc
+@@ -534,7 +534,9 @@ fhandler_pty_master::accept_input ()
+       acquire_attach_mutex (mutex_timeout);
+       pinfo pinfo_resume = pinfo (myself->ppid);
+       DWORD resume_pid;
+-      if (pinfo_resume)
++      if (helper_pid)
++	resume_pid = helper_pid;
++      else if (pinfo_resume)
+ 	resume_pid = pinfo_resume->dwProcessId;
+       else
+ 	resume_pid = get_console_process_id (myself->dwProcessId, false);
+@@ -2170,6 +2172,16 @@ fhandler_pty_master::close ()
+ 	  get_ttyp ()->stop_fwd_thread = true;
+ 	  WriteFile (to_master_nat, "", 0, &len, NULL);
+ 	  master_fwd_thread->detach ();
++	  if (helper_goodbye)
++	    {
++	      SetEvent (helper_goodbye);
++	      WaitForSingleObject (helper_h_process, INFINITE);
++	      CloseHandle (helper_h_process);
++	      CloseHandle (helper_goodbye);
++	      helper_pid = 0;
++	      helper_h_process = 0;
++	      helper_goodbye = NULL;
++	    }
+ 	}
+     }
+ 
+@@ -2878,7 +2890,9 @@ fhandler_pty_master::pty_master_fwd_thread (const master_fwd_thread_param_t *p)
+       acquire_attach_mutex (mutex_timeout);
+       pinfo pinfo_resume = pinfo (myself->ppid);
+       DWORD resume_pid;
+-      if (pinfo_resume)
++      if (p->helper_pid)
++	resume_pid = p->helper_pid;
++      else if (pinfo_resume)
+ 	resume_pid = pinfo_resume->dwProcessId;
+       else
+ 	resume_pid = get_console_process_id (myself->dwProcessId, false);
+@@ -3071,6 +3085,57 @@ fhandler_pty_master::setup ()
+       goto err;
+     }
+   WaitForSingleObject (thread_param_copied_event, INFINITE);
++
++  if (wincap.has_broken_attach_console ()
++      && _major (myself->ctty) == DEV_CONS_MAJOR
++      && !(!pinfo (myself->ppid) && getenv ("ConEmuPID")))
++    {
++      HANDLE hello = CreateEvent (&sec_none, true, false, NULL);
++      HANDLE goodbye = CreateEvent (&sec_none, true, false, NULL);
++      WCHAR cmd[MAX_PATH];
++      path_conv helper ("/bin/cygwin-console-helper.exe");
++      size_t len = helper.get_wide_win32_path_len ();
++      helper.get_wide_win32_path (cmd);
++      __small_swprintf (cmd + len, L" %p %p", hello, goodbye);
++
++      STARTUPINFOEXW si;
++      PROCESS_INFORMATION pi;
++      ZeroMemory (&si, sizeof (si));
++      si.StartupInfo.cb = sizeof (STARTUPINFOEXW);
++
++      SIZE_T bytesRequired;
++      InitializeProcThreadAttributeList (NULL, 1, 0, &bytesRequired);
++      si.lpAttributeList = (PPROC_THREAD_ATTRIBUTE_LIST)
++	HeapAlloc (GetProcessHeap (), 0, bytesRequired);
++      InitializeProcThreadAttributeList (si.lpAttributeList,
++					 1, 0, &bytesRequired);
++      HANDLE handles_to_inherit[] = {hello, goodbye};
++      UpdateProcThreadAttribute (si.lpAttributeList,
++				 0,
++				 PROC_THREAD_ATTRIBUTE_HANDLE_LIST,
++				 handles_to_inherit,
++				 sizeof (handles_to_inherit),
++				 NULL, NULL);
++      if (CreateProcessW (NULL, cmd, &sec_none, &sec_none,
++			  TRUE, EXTENDED_STARTUPINFO_PRESENT,
++			  NULL, NULL, &si.StartupInfo, &pi))
++	{
++	  WaitForSingleObject (hello, INFINITE);
++	  CloseHandle (hello);
++	  CloseHandle (pi.hThread);
++	  helper_goodbye = goodbye;
++	  helper_pid = pi.dwProcessId;
++	  helper_h_process = pi.hProcess;
++	}
++      else
++	{
++	  CloseHandle (hello);
++	  CloseHandle (goodbye);
++	}
++      DeleteProcThreadAttributeList (si.lpAttributeList);
++      HeapFree (GetProcessHeap (), 0, si.lpAttributeList);
++    }
++
+   master_fwd_thread = new cygthread (::pty_master_fwd_thread, this, "ptymf");
+   if (!master_fwd_thread)
+     {
+@@ -3875,6 +3940,7 @@ fhandler_pty_master::get_master_fwd_thread_param (master_fwd_thread_param_t *p)
+   p->from_slave_nat = from_slave_nat;
+   p->output_mutex = output_mutex;
+   p->ttyp = get_ttyp ();
++  p->helper_pid = helper_pid;
+   SetEvent (thread_param_copied_event);
+ }
+ 
+diff --git a/winsup/cygwin/wincap.cc b/winsup/cygwin/wincap.cc
+index 6c79d87..af34de5 100644
+--- a/winsup/cygwin/wincap.cc
++++ b/winsup/cygwin/wincap.cc
+@@ -51,6 +51,7 @@ wincaps wincap_vista __attribute__((section (".cygwin_dll_common"), shared)) = {
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:false,
+     has_query_process_handle_info:false,
++    has_broken_attach_console:true,
+   },
+ };
+ 
+@@ -87,6 +88,7 @@ wincaps wincap_7 __attribute__((section (".cygwin_dll_common"), shared)) = {
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:false,
+     has_query_process_handle_info:false,
++    has_broken_attach_console:true,
+   },
+ };
+ 
+@@ -123,6 +125,7 @@ wincaps wincap_8 __attribute__((section (".cygwin_dll_common"), shared)) = {
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:false,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -159,6 +162,7 @@ wincaps wincap_8_1 __attribute__((section (".cygwin_dll_common"), shared)) = {
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:false,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -195,6 +199,7 @@ wincaps  wincap_10_1507 __attribute__((section (".cygwin_dll_common"), shared))
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:false,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -231,6 +236,7 @@ wincaps  wincap_10_1607 __attribute__((section (".cygwin_dll_common"), shared))
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:true,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -267,6 +273,7 @@ wincaps wincap_10_1703 __attribute__((section (".cygwin_dll_common"), shared)) =
+     has_linux_tcp_keepalive_sockopts:false,
+     has_tcp_maxrtms:true,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -303,6 +310,7 @@ wincaps wincap_10_1709 __attribute__((section (".cygwin_dll_common"), shared)) =
+     has_linux_tcp_keepalive_sockopts:true,
+     has_tcp_maxrtms:true,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -339,6 +347,7 @@ wincaps wincap_10_1803 __attribute__((section (".cygwin_dll_common"), shared)) =
+     has_linux_tcp_keepalive_sockopts:true,
+     has_tcp_maxrtms:true,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -375,6 +384,7 @@ wincaps wincap_10_1809 __attribute__((section (".cygwin_dll_common"), shared)) =
+     has_linux_tcp_keepalive_sockopts:true,
+     has_tcp_maxrtms:true,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+@@ -411,6 +421,7 @@ wincaps wincap_10_1903 __attribute__((section (".cygwin_dll_common"), shared)) =
+     has_linux_tcp_keepalive_sockopts:true,
+     has_tcp_maxrtms:true,
+     has_query_process_handle_info:true,
++    has_broken_attach_console:false,
+   },
+ };
+ 
+diff --git a/winsup/cygwin/wincap.h b/winsup/cygwin/wincap.h
+index 7249b95..63911d0 100644
+--- a/winsup/cygwin/wincap.h
++++ b/winsup/cygwin/wincap.h
+@@ -45,6 +45,7 @@ struct wincaps
+     unsigned has_linux_tcp_keepalive_sockopts			: 1;
+     unsigned has_tcp_maxrtms					: 1;
+     unsigned has_query_process_handle_info			: 1;
++    unsigned has_broken_attach_console				: 1;
+   };
+ };
+ 
+@@ -113,6 +114,7 @@ public:
+   bool	IMPLEMENT (has_linux_tcp_keepalive_sockopts)
+   bool	IMPLEMENT (has_tcp_maxrtms)
+   bool	IMPLEMENT (has_query_process_handle_info)
++  bool	IMPLEMENT (has_broken_attach_console)
+ 
+   void disable_case_sensitive_dirs ()
+   {
+diff --git a/winsup/utils/mingw/cygwin-console-helper.cc b/winsup/utils/mingw/cygwin-console-helper.cc
+index 66004bd..80d15e3 100644
+--- a/winsup/utils/mingw/cygwin-console-helper.cc
++++ b/winsup/utils/mingw/cygwin-console-helper.cc
+@@ -6,11 +6,11 @@ main (int argc, char **argv)
+   char *end;
+   if (argc < 3)
+     exit (1);
++  SetConsoleCtrlHandler (NULL, TRUE);
+   HANDLE h = (HANDLE) strtoull (argv[1], &end, 0);
+   SetEvent (h);
+   if (argc == 4) /* Pseudo console helper mode for PTY */
+     {
+-      SetConsoleCtrlHandler (NULL, TRUE);
+       HANDLE hPipe = (HANDLE) strtoull (argv[3], &end, 0);
+       char buf[64];
+       sprintf (buf, "StdHandles=%p,%p\n",
+-- 
+2.9.0
+
