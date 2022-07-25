@@ -1,4 +1,4 @@
-From 369c55daca87ff603af0988aee6ac654707f2f97 Mon Sep 17 00:00:00 2001
+From 95d30af67bcbe14a0755e24c85400affc01eac20 Mon Sep 17 00:00:00 2001
 From: Alexey Pavlov <alexpux@gmail.com>
 Date: Thu, 28 Jun 2018 11:41:32 +0300
 Subject: [PATCH 5/7] perl.cygwin-Win32
@@ -38,7 +38,7 @@ index 649420a..82ce2d5 100644
  unlink($path);
  ok(!-f $path);
 diff --git a/cpan/Win32/t/Unicode.t b/cpan/Win32/t/Unicode.t
-index 8362853..a71f586 100644
+index c1380e8..fa05188 100644
 --- a/cpan/Win32/t/Unicode.t
 +++ b/cpan/Win32/t/Unicode.t
 @@ -1,8 +1,9 @@
@@ -117,7 +117,7 @@ index 8362853..a71f586 100644
 +    $subdir = decode "UTF-8", Cygwin::posix_to_win_path($subdir, 1);
  }
  $subdir =~ s,/,\\,g;
- ok(Win32::GetLongPathName($subdir), $long);
+ # Cygwin64 no longer returns an ANSI name
 -- 
-2.32.0
+2.37.1
 
