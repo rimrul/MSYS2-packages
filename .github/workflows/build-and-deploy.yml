@@ -45,6 +45,7 @@ jobs:
           flavor: full
           architecture: ${{env.ARCHITECTURE}}
           msys: true
+          path: C:\git-sdk-32
       - name: Clone MSYS2-packages
         shell: bash
         env:
@@ -59,7 +60,7 @@ jobs:
         if: env.ARCHITECTURE == 'i686' && !contains('msys2-runtime gnupg', env.PACKAGE_TO_BUILD)
         shell: powershell
         run: |
-          cd C:\git-sdk-32-full-sdk
+          cd C:\git-sdk-32
           if (!$?) { exit(1); }
 
           $env:PATH += ";$(Get-Location)"
