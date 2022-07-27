@@ -1,7 +1,7 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=subversion
-pkgver=1.14.1
+pkgver=1.14.2
 pkgrel=1
 pkgdesc="A Modern Concurrent Version Control System"
 arch=('i686' 'x86_64')
@@ -40,7 +40,7 @@ source=(https://archive.apache.org/dist/subversion/subversion-${pkgver}.tar.bz2{
         subversion-1.9.1-msys2.patch
         remove-checking-symlink.patch
         90-use-copy-instead-symlink.patch)
-sha256sums=('2c5da93c255d2e5569fa91d92457fdb65396b0666fad4fd59b22e154d986e1a9'
+sha256sums=('c9130e8d0b75728a66f0e7038fc77052e671830d785b5616aad53b4810d3cc28'
             'SKIP'
             'b09dd041aba0078c8d50df130ef2f96c3ef8486279a620532fef4fe48ef9961e'
             '66d8028dbee086502e453d7435aa15f7e141dbc8808e650e883e1d90a0a022b1'
