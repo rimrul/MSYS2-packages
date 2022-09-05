@@ -1,4 +1,4 @@
-From 91bc72c56ce4ef19c3415d1792ea52e568193ba2 Mon Sep 17 00:00:00 2001
+From 31b5e84ef74da21c7a8f9fea5c7395154f1ae36b Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Mon, 8 Nov 2021 16:22:57 +0100
 Subject: [PATCH 33/N] install-libs: depend on the "toollibs"
