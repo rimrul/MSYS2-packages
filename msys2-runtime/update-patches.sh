@@ -32,6 +32,7 @@ git -c core.abbrev=7 \
 	-c format.useAutoBase=false \
 	-C src/msys2-runtime \
 	format-patch \
+		--no-signature \
 		--topo-order \
 		--diff-algorithm=default \
 		--no-attach \
@@ -40,7 +41,6 @@ git -c core.abbrev=7 \
 		--no-thread \
 		--suffix=.patch \
 		--subject-prefix=PATCH \
-		--signature=2.9.0 \
 		--output-directory ../.. \
 			$base_tag.. ${merging_rebase_start:+^$merging_rebase_start} ||
 die "Could not generate new patch set"
