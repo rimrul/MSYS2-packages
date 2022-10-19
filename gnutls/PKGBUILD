@@ -2,7 +2,7 @@
 
 pkgbase=gnutls
 pkgname=('gnutls' 'libgnutls' 'libgnutls-devel')
-_base_ver=3.7.7
+_base_ver=3.7.8
 pkgver=${_base_ver}
 pkgrel=1
 pkgdesc="A library which provides a secure layer over a reliable transport layer"
@@ -22,7 +22,7 @@ makedepends=('gettext-devel'
 #optdepends=('guile: for use with Guile bindings')
 source=(https://gnupg.org/ftp/gcrypt/gnutls/v${_base_ver%.*}/${pkgname}-${pkgver}.tar.xz{,.sig}
         gnulib-weak.patch)
-sha256sums=('be9143d0d58eab64dba9b77114aaafac529b6c0d7e81de6bdf1c9b59027d2106'
+sha256sums=('c58ad39af0670efe6a8aee5e3a8b2331a1200418b64b7c51977fb396d4617114'
             'SKIP'
             '610499234d0442a27d048dab0dd233111d78f67c928979e40a02b6ac223bfbbf')
 validpgpkeys=('0424D4EE81A0E3D119C6F835EDA21E94B565716F' # "Simon Josefsson <simon@josefsson.org>"
