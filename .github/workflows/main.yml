@@ -12,6 +12,7 @@ jobs:
       - uses: git-for-windows/setup-git-for-windows-sdk@v1
         with:
           flavor: full
+          msys: true
       - name: install pactoys (needed for `saneman`)
         shell: bash
         run: bash -lc "pacman -S --noconfirm pactoys"
