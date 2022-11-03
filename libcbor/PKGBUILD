@@ -17,6 +17,9 @@ build() {
   cmake . \
     -Bbuild \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_MAKE_PROGRAM="/usr/bin/make.exe" \
+    -DCMAKE_C_COMPILER="/usr/bin/gcc.exe" \
+    -DCMAKE_CXX_COMPILER="/usr/bin/g++.exe" \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DCBOR_CUSTOM_ALLOC=ON \
     -DBUILD_SHARED_LIBS=ON 
