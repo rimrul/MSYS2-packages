@@ -1,8 +1,8 @@
 diff --git a/bashline.c b/bashline.c
-index c9c7411..3856242 100644
+index 8f69bc6..6d285c5 100644
 --- a/bashline.c
 +++ b/bashline.c
-@@ -807,7 +807,11 @@ snarf_hosts_from_file (filename)
+@@ -822,7 +822,11 @@ snarf_hosts_from_file (filename)
    char *temp, buffer[256], name[256];
    register int i, start;
  
@@ -16,10 +16,10 @@ index c9c7411..3856242 100644
      return;
  
 diff --git a/builtins/fc.def b/builtins/fc.def
-index 467dbcb..b996472 100644
+index 9b8a997..5be93bd 100644
 --- a/builtins/fc.def
 +++ b/builtins/fc.def
-@@ -678,6 +678,10 @@ fc_readline (stream)
+@@ -681,6 +681,10 @@ fc_readline (stream)
       FILE *stream;
  {
    register int c;
@@ -30,7 +30,7 @@ index 467dbcb..b996472 100644
    int line_len = 0, lindex = 0;
    char *line = (char *)NULL;
  
-@@ -688,12 +692,19 @@ fc_readline (stream)
+@@ -691,12 +695,19 @@ fc_readline (stream)
  
        if (c == '\n')
  	{
@@ -51,10 +51,10 @@ index 467dbcb..b996472 100644
  
    if (!lindex)
 diff --git a/general.c b/general.c
-index f7b6de1..265fdf9 100644
+index f4c2a2f..0ae74ca 100644
 --- a/general.c
 +++ b/general.c
-@@ -809,7 +809,8 @@ int
+@@ -818,7 +818,8 @@ int
  absolute_program (string)
       const char *string;
  {
@@ -65,10 +65,10 @@ index f7b6de1..265fdf9 100644
  
  /* **************************************************************** */
 diff --git a/lib/readline/display.c b/lib/readline/display.c
-index 38b3d0e..569da12 100644
+index c1135ec..b388af6 100644
 --- a/lib/readline/display.c
 +++ b/lib/readline/display.c
-@@ -508,7 +508,10 @@ expand_prompt (char *pmt, int flags, int *lp, int *lip, int *niflp, int *vlp)
+@@ -529,7 +529,10 @@ expand_prompt (char *pmt, int flags, int *lp, int *lip, int *niflp, int *vlp)
    if (lp)
      *lp = rl;
    if (lip)
@@ -81,10 +81,10 @@ index 38b3d0e..569da12 100644
      *niflp = invfl;
    if  (vlp)
 diff --git a/parse.y b/parse.y
-index c1bdf45..ec1345e 100644
+index 0ae3458..c6e9520 100644
 --- a/parse.y
 +++ b/parse.y
-@@ -1419,7 +1419,13 @@ yy_input_name ()
+@@ -1459,7 +1459,13 @@ yy_input_name ()
  static int
  yy_getc ()
  {
@@ -100,10 +100,10 @@ index c1bdf45..ec1345e 100644
  
  /* Call this to unget C.  That is, to make C the next character
 diff --git a/shell.c b/shell.c
-index ce8087f..b4a6c3b 100644
+index ee9d445..8f25726 100644
 --- a/shell.c
 +++ b/shell.c
-@@ -1663,7 +1663,11 @@ open_shell_script (script_name)
+@@ -1696,7 +1696,11 @@ open_shell_script (script_name)
    default_buffered_input = fd;
    SET_CLOSE_ON_EXEC (default_buffered_input);
  #else /* !BUFFERED_INPUT */
@@ -117,10 +117,10 @@ index ce8087f..b4a6c3b 100644
    if (default_input == 0)
      {
 diff --git a/stringlib.c b/stringlib.c
-index 745e536..0c47034 100644
+index 7330496..8623fa6 100644
 --- a/stringlib.c
 +++ b/stringlib.c
-@@ -270,7 +270,15 @@ strip_trailing (string, len, newlines_only)
+@@ -278,7 +278,15 @@ strip_trailing (string, len, newlines_only)
      {
        if ((newlines_only && string[len] == '\n') ||
  	  (!newlines_only && whitespace (string[len])))
@@ -137,10 +137,10 @@ index 745e536..0c47034 100644
  	break;
      }
 diff --git a/subst.c b/subst.c
-index 79476d3..fc85ca3 100644
+index 2001b4e..3ba2029 100644
 --- a/subst.c
 +++ b/subst.c
-@@ -6290,6 +6290,15 @@ read_comsub (fd, quoted, flags, rflag)
+@@ -6895,6 +6895,15 @@ read_comsub (fd, quoted, flags, rflag)
  	      /* If the newline was quoted, remove the quoting char. */
  	      if (istring[istring_index - 1] == CTLESC)
  		--istring_index;
@@ -157,10 +157,10 @@ index 79476d3..fc85ca3 100644
  	  else
  	    break;
 diff --git a/variables.c b/variables.c
-index d6c30dc..c75de47 100644
+index 028667c..a10594d 100644
 --- a/variables.c
 +++ b/variables.c
-@@ -2596,6 +2596,20 @@ set_if_not (name, value)
+@@ -2593,6 +2593,20 @@ set_if_not (name, value)
  {
    SHELL_VAR *v;
  
@@ -182,10 +182,10 @@ index d6c30dc..c75de47 100644
      create_variable_tables ();
  
 diff --git a/y.tab.c b/y.tab.c
-index dcc5b7f..0071e8c 100644
+index 32b4c7c..ac70820 100644
 --- a/y.tab.c
 +++ b/y.tab.c
-@@ -3713,7 +3713,13 @@ yy_input_name ()
+@@ -3770,7 +3770,13 @@ yy_input_name ()
  static int
  yy_getc ()
  {
@@ -200,7 +200,7 @@ index dcc5b7f..0071e8c 100644
  }
  
  /* Call this to unget C.  That is, to make C the next character
-@@ -4697,6 +4703,10 @@ shell_getc (remove_quoted_newline)
+@@ -4746,6 +4752,10 @@ shell_getc (remove_quoted_newline)
  	  else
  	    RESIZE_MALLOCED_BUFFER (shell_input_line, i, 2, shell_input_line_size, 256);
  

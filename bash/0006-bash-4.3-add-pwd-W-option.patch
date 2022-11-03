@@ -1,5 +1,5 @@
 diff --git a/builtins/cd.def b/builtins/cd.def
-index 7205608..2e25fa3 100644
+index b87c5d9..5e4e78e 100644
 --- a/builtins/cd.def
 +++ b/builtins/cd.def
 @@ -28,6 +28,8 @@ $PRODUCES cd.c

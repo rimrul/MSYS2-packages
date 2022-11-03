@@ -1,17 +1,17 @@
 diff --git a/MANIFEST b/MANIFEST
-index 54f327c..03eb2c4 100644
+index a45b3cf..7172f3d 100644
 --- a/MANIFEST
 +++ b/MANIFEST
-@@ -208,6 +208,7 @@ builtins/bashgetopt.c	f
+@@ -211,6 +211,7 @@ builtins/bashgetopt.c	f
  builtins/common.h	f
  builtins/bashgetopt.h	f
- cross-build/cygwin32.cache	f
-+cross-build/msys32.cache	f
+ #cross-build/cygwin32.cache	f
++#cross-build/msys32.cache	f
  cross-build/x86-beos.cache	f
  cross-build/opennt.cache	f
  cross-build/qnx.cache	f
 diff --git a/configure.ac b/configure.ac
-index 2fe3e7d..574bdb1 100644
+index 50a6e20..f770177 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -76,7 +76,7 @@ m68k-sysv)	opt_bash_malloc=no ;;	# fixes file descriptor leak in closedir
@@ -23,7 +23,7 @@ index 2fe3e7d..574bdb1 100644
  # These lack a working sbrk(2)
  aarch64-freebsd*)	opt_bash_malloc=no ;;
  riscv*-freebsd*)	opt_bash_malloc=no ;;
-@@ -446,6 +446,9 @@ if test "x$cross_compiling" = "xyes"; then
+@@ -462,6 +462,9 @@ if test "x$cross_compiling" = "xyes"; then
      *-cygwin*)
  	cross_cache=${srcdir}/cross-build/cygwin32.cache
  	;;
@@ -33,7 +33,7 @@ index 2fe3e7d..574bdb1 100644
      *-mingw*)
  	cross_cache=${srcdir}/cross-build/cygwin32.cache
  	;;
-@@ -580,7 +583,7 @@ if test $opt_readline = yes; then
+@@ -602,7 +605,7 @@ if test $opt_readline = yes; then
  		# section for OS versions that don't allow unresolved symbols
  		# to be compiled into dynamic libraries.
  		case "$host_os" in
@@ -42,7 +42,7 @@ index 2fe3e7d..574bdb1 100644
  		esac
  	else
  		RL_LIBDIR='$(dot)/$(LIBSUBDIR)/readline'
-@@ -1168,7 +1171,7 @@ freebsd*)	LOCAL_CFLAGS='-DHEREDOC_PIPESIZE=4096' ;;
+@@ -1180,7 +1183,7 @@ freebsd*|midnightbsd*)	LOCAL_CFLAGS='-DHEREDOC_PIPESIZE=4096' ;;
  *qnx[[67]]*)	LOCAL_LIBS="-lncurses" ;;
  *qnx*)		LOCAL_CFLAGS="-Dqnx -F -3s" LOCAL_LDFLAGS="-3s" LOCAL_LIBS="-lunix -lncurses" ;;
  powerux*)	LOCAL_LIBS="-lgen" ;;
@@ -358,30 +358,6 @@ index b0cf4a8..1362eaa 100644
  [ -n "${have:-}" ] && complete $filenames -F _gcc cc
  
  # Linux cardctl(8) completion
-diff --git a/support/config.guess b/support/config.guess
-index 0fc11ed..ba80182 100755
---- a/support/config.guess
-+++ b/support/config.guess
-@@ -876,6 +876,9 @@ EOF
-     *:MINGW64*:*)
- 	echo "$UNAME_MACHINE"-pc-mingw64
- 	exit ;;
-+    i*:MSYS*:*)
-+	echo ${UNAME_MACHINE}-pc-msys
-+	exit ;;
-     *:MINGW*:*)
- 	echo "$UNAME_MACHINE"-pc-mingw32
- 	exit ;;
-@@ -903,6 +906,9 @@ EOF
-     amd64:CYGWIN*:*:* | x86_64:CYGWIN*:*:*)
- 	echo x86_64-pc-cygwin
- 	exit ;;
-+    amd64:MSYS*:*:* | x86_64:MSYS*:*:*)
-+	echo x86_64-pc-msys
-+	exit ;;
-     prep*:SunOS:5.*:*)
- 	echo powerpcle-unknown-solaris2"$(echo "$UNAME_RELEASE"|sed -e 's/[^.]*//')"
- 	exit ;;
 diff --git a/support/config.rpath b/support/config.rpath
 index fc5913d..54df920 100755
 --- a/support/config.rpath
@@ -432,7 +408,7 @@ index fc5913d..54df920 100755
      library_names_spec='$libname.dll.a $libname.lib'
      ;;
 diff --git a/support/shobj-conf b/support/shobj-conf
-index 5a3f977..00a10a7 100755
+index cd7634d..6bd693c 100755
 --- a/support/shobj-conf
 +++ b/support/shobj-conf
 @@ -484,6 +484,23 @@ cygwin*)
