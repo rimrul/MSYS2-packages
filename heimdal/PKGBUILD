@@ -30,7 +30,8 @@ sha256sums=('fd87a207846fa650fd377219adc4b8a8193e55904d8a752c2c3715b4155d8d38'
             '2217945f181942872f1ccdef1b1e3a15d2f757ec1270621dcacdebbf539b4384'
             'bfe321c0391d6f7e23abecc22e9941bcb79d0b67abb9975246a9f462ec32513b'
             '1960c9cf2f10c83881fc1cb0fd8a03576a18f29cceebae6e7fb09f2871430fdd')
-validpgpkeys=('E65941B71CF3C459A34FA89C45E7572A28CD8CC8') # Heimdal Release Key
+validpgpkeys=('E65941B71CF3C459A34FA89C45E7572A28CD8CC8'
+              'FB925C7AFA000F52B4BBD1ED9A077911BB7DC320') # Heimdal Release Key
 
 prepare() {
   cd ${srcdir}/heimdal-${pkgver}
