@@ -11,7 +11,7 @@ license=('custom')
 makedepends=('libcrypt-devel' 'libedit-devel' 'libsqlite-devel' 'openssl-devel') #libldap-devel
 options=('!libtool' '!emptydirs' 'staticlibs')
 groups=('net-utils')
-source=(https://github.com/heimdal/heimdal/releases/download/heimdal-7.5.0/heimdal-${pkgver}.tar.gz{,.sig}
+source=(https://github.com/heimdal/heimdal/releases/download/heimdal-${pkgver}/heimdal-${pkgver}.tar.gz{,.sig}
         1.2.1-test-modules.patch
         1.5.2-hdbdir.patch
         1.5.2-install-catman.patch
