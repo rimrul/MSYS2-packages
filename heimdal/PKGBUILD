@@ -2,7 +2,7 @@
 
 pkgbase=heimdal
 pkgname=('heimdal' 'heimdal-libs' 'heimdal-devel')
-pkgver=7.5.0
+pkgver=7.8.0
 pkgrel=3
 pkgdesc="Implementation of Kerberos V5 libraries"
 arch=('i686' 'x86_64')
@@ -11,7 +11,7 @@ license=('custom')
 makedepends=('libcrypt-devel' 'libedit-devel' 'libsqlite-devel' 'openssl-devel') #libldap-devel
 options=('!libtool' '!emptydirs' 'staticlibs')
 groups=('net-utils')
-source=(https://github.com/heimdal/heimdal/releases/download/heimdal-7.5.0/heimdal-${pkgver}.tar.gz{,.sig}
+source=(https://github.com/heimdal/heimdal/releases/download/heimdal-${pkgver}/heimdal-${pkgver}.tar.gz{,.sig}
         1.2.1-test-modules.patch
         1.5.2-hdbdir.patch
         1.5.2-install-catman.patch
@@ -20,7 +20,7 @@ source=(https://github.com/heimdal/heimdal/releases/download/heimdal-7.5.0/heimd
         0001-Work-around-LN_S-ln.patch
         7.5.0-names-clash-with-openssl.patch
         0001-do-link-zlib-together-with-libcrypto.patch)
-sha256sums=('c5a2a0030fcc728022fa2332bad85569084d1c3b9a59587b7ebe141b0532acad'
+sha256sums=('fd87a207846fa650fd377219adc4b8a8193e55904d8a752c2c3715b4155d8d38'
             'SKIP'
             'b18c9ca3f2db08cea0a4b7d7f07e8656360af848b3a30a5fa8d748240989da49'
             'eb4b2a170a65225789b554948108d6a073e31b4118a2461c1375b046ba360b2d'
@@ -30,7 +30,8 @@ sha256sums=('c5a2a0030fcc728022fa2332bad85569084d1c3b9a59587b7ebe141b0532acad'
             '2217945f181942872f1ccdef1b1e3a15d2f757ec1270621dcacdebbf539b4384'
             'bfe321c0391d6f7e23abecc22e9941bcb79d0b67abb9975246a9f462ec32513b'
             '1960c9cf2f10c83881fc1cb0fd8a03576a18f29cceebae6e7fb09f2871430fdd')
-validpgpkeys=('E65941B71CF3C459A34FA89C45E7572A28CD8CC8') # Heimdal Release Key
+validpgpkeys=('E65941B71CF3C459A34FA89C45E7572A28CD8CC8'
+              'FB925C7AFA000F52B4BBD1ED9A077911BB7DC320') # Heimdal Release Key
 
 prepare() {
   cd ${srcdir}/heimdal-${pkgver}
