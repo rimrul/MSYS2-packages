@@ -1,4 +1,5 @@
 name: build-and-deploy
+run-name: Build${{ inputs.build_only == '' && ' and deploy' || '' }} ${{ inputs.package }} (${{ inputs.architecture }})
 
 on:
   workflow_dispatch:
