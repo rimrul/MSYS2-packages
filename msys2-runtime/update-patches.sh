@@ -42,7 +42,8 @@ git -c core.abbrev=7 \
 		--suffix=.patch \
 		--subject-prefix=PATCH \
 		--output-directory ../.. \
-			$base_tag.. ${merging_rebase_start:+^$merging_rebase_start} ||
+		$base_tag.. ${merging_rebase_start:+^$merging_rebase_start} \
+		-- ':(exclude).github/' ||
 die "Could not generate new patch set"
 
 patches="$(ls 0*.patch)" &&
