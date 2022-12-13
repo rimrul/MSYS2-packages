@@ -91,7 +91,7 @@ package_libpcre2posix() {
   groups=('libraries')
 
   mkdir -p ${pkgdir}/usr/bin
-  cp -f ${srcdir}/dest/usr/bin/*pcre2-posix-2.dll ${pkgdir}/usr/bin/
+  cp -f ${srcdir}/dest/usr/bin/*pcre2-posix-[0-9]*.dll ${pkgdir}/usr/bin/
 }
 
 package_pcre2-devel() {
