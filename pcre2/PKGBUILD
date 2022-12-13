@@ -9,7 +9,7 @@ arch=('i686' 'x86_64')
 url="https://www.pcre.org/"
 license=('BSD')
 makedepends=('libreadline-devel' 'libbz2-devel' 'zlib-devel')
-source=(ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkgname}-${pkgver}.tar.bz2{,.sig}
+source=(https://github.com/PhilipHazel/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig}
         pcre2-10.31-msys2.patch
         cygwin-not-win32.patch)
 sha256sums=('e07d538704aa65e477b6a392b32ff9fc5edf75ab9a40ddfc876186c4ff4d68ac'
