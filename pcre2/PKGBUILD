@@ -9,20 +9,12 @@ arch=('i686' 'x86_64')
 url="https://www.pcre.org/"
 license=('BSD')
 makedepends=('libreadline-devel' 'libbz2-devel' 'zlib-devel')
-source=(https://github.com/PCRE2project/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig}
-        pcre2-10.31-msys2.patch
-        cygwin-not-win32.patch)
+source=(https://github.com/PCRE2project/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig})
 sha256sums=('8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840'
-            'SKIP'
-            '5cce2b122c50837930abb7ddc54fc6af14399f8ba7e017e098a5eef9fc89d4a6'
-            '466f35da9c46e82e1d4d8462bec27e758ec10e5e7294cac4724635655909f09c')
+            'SKIP')
 
 prepare() {
   cd "${srcdir}"/${pkgname}-${pkgver}
-
-  # MSYS2 patches
-  patch -p1 -i ${srcdir}/pcre2-10.31-msys2.patch
-  patch -p1 -i ${srcdir}/cygwin-not-win32.patch
 
   autoreconf -fi
 }
