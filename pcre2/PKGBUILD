@@ -9,12 +9,19 @@ arch=('i686' 'x86_64')
 url="https://www.pcre.org/"
 license=('BSD')
 makedepends=('libreadline-devel' 'libbz2-devel' 'zlib-devel')
-source=(https://github.com/PCRE2project/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig})
+source=(https://github.com/PCRE2project/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig}
+        0001-Allow-building-an-MSYS-DLL.patch
+        0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch)
 sha256sums=('8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840'
-            'SKIP')
+            'SKIP'
+            'bc1fd67cdd691b6ee00a84aecc47d3fa6d15e05e5c64ed75b49b9100f2808a30'
+            '0e4aab7b5e3b136560a24f07397d21add67a58b6ae523caa8fc915076fa7937d')
 
 prepare() {
   cd "${srcdir}"/${pkgname}-${pkgver}
+
+  patch -p1 -i "${srcdir}"/0001-Allow-building-an-MSYS-DLL.patch
+  patch -p1 -i "${srcdir}"/0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch
 
   autoreconf -fi
 }
