@@ -11,17 +11,20 @@ license=('BSD')
 makedepends=('libreadline-devel' 'libbz2-devel' 'zlib-devel')
 source=(https://github.com/PCRE2project/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig}
         0001-Allow-building-an-MSYS-DLL.patch
-        0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch)
+        0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch
+        0003-pcre2-10.40-cygwin-jit.patch)
 sha256sums=('8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840'
             'SKIP'
-            'bc1fd67cdd691b6ee00a84aecc47d3fa6d15e05e5c64ed75b49b9100f2808a30'
-            '0e4aab7b5e3b136560a24f07397d21add67a58b6ae523caa8fc915076fa7937d')
+            'f1d83ee9cdb5b6885b51fdcae7285edf6078391240db458ba3032fcdcec20260'
+            'f6550e4ba5b26c404e956a55e371aa9a498972aa6a70ace4f8775f30c26f626b'
+            'df4f6b1e63e33930076733906e70d754e4bba52e4b81bb2237ba7658d0bc1587')
 
 prepare() {
   cd "${srcdir}"/${pkgname}-${pkgver}
 
   patch -p1 -i "${srcdir}"/0001-Allow-building-an-MSYS-DLL.patch
   patch -p1 -i "${srcdir}"/0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch
+  patch -p1 -i "${srcdir}"/0003-pcre2-10.40-cygwin-jit.patch
 
   autoreconf -fi
 }
@@ -31,13 +34,13 @@ build() {
   ./configure \
       --build=${CHOST} \
       --prefix=/usr \
-      --disable-jit \
+      --enable-jit \
       --enable-pcre2-8 \
       --enable-pcre2-16 \
       --enable-pcre2-32 \
       --enable-newline-is-anycrlf \
       --enable-unicode \
-      --disable-pcre2grep-jit \
+      --enable-pcre2grep-jit \
       --enable-pcre2grep-libbz2 \
       --enable-pcre2grep-libz \
       --disable-pcre2test-libedit \

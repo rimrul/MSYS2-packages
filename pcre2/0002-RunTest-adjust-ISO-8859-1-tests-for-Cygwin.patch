@@ -1,7 +1,7 @@
 From 8ad0f59ef58504d09b8c6c7b6ee90cd367161c3a Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Fri, 2 Jun 2017 17:54:57 +0200
-Subject: [PATCH 2/2] RunTest: adjust ISO-8859-1 tests for Cygwin
+Subject: [PATCH 2/3] RunTest: adjust ISO-8859-1 tests for Cygwin
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
