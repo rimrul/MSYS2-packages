@@ -2,27 +2,30 @@
 
 pkgbase=pcre2
 pkgname=('pcre2' 'libpcre2_8' 'libpcre2_16' 'libpcre2_32' 'libpcre2posix' 'pcre2-devel')
-pkgver=10.31
+pkgver=10.42
 pkgrel=1
 pkgdesc="A library that implements Perl 5-style regular expressions"
 arch=('i686' 'x86_64')
 url="https://www.pcre.org/"
 license=('BSD')
 makedepends=('libreadline-devel' 'libbz2-devel' 'zlib-devel')
-source=(https://github.com/PhilipHazel/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig}
-        pcre2-10.31-msys2.patch
-        cygwin-not-win32.patch)
-sha256sums=('e07d538704aa65e477b6a392b32ff9fc5edf75ab9a40ddfc876186c4ff4d68ac'
+source=(https://github.com/PCRE2project/pcre2/releases/download/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.bz2{,.sig}
+        0001-Allow-building-an-MSYS-DLL.patch
+        0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch
+        0003-pcre2-10.40-cygwin-jit.patch)
+sha256sums=('8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840'
             'SKIP'
-            '5cce2b122c50837930abb7ddc54fc6af14399f8ba7e017e098a5eef9fc89d4a6'
-            '466f35da9c46e82e1d4d8462bec27e758ec10e5e7294cac4724635655909f09c')
+            'f1d83ee9cdb5b6885b51fdcae7285edf6078391240db458ba3032fcdcec20260'
+            'f6550e4ba5b26c404e956a55e371aa9a498972aa6a70ace4f8775f30c26f626b'
+            'df4f6b1e63e33930076733906e70d754e4bba52e4b81bb2237ba7658d0bc1587')
+validpgpkeys=('45F68D54BBE23FB3039B46E59766E084FB0F43D8') # Philip Hazel <ph10@hermes.cam.ac.uk>
 
 prepare() {
   cd "${srcdir}"/${pkgname}-${pkgver}
 
-  # MSYS2 patches
-  patch -p1 -i ${srcdir}/pcre2-10.31-msys2.patch
-  patch -p1 -i ${srcdir}/cygwin-not-win32.patch
+  patch -p1 -i "${srcdir}"/0001-Allow-building-an-MSYS-DLL.patch
+  patch -p1 -i "${srcdir}"/0002-RunTest-adjust-ISO-8859-1-tests-for-Cygwin.patch
+  patch -p1 -i "${srcdir}"/0003-pcre2-10.40-cygwin-jit.patch
 
   autoreconf -fi
 }
@@ -32,13 +35,13 @@ build() {
   ./configure \
       --build=${CHOST} \
       --prefix=/usr \
-      --disable-jit \
+      --enable-jit \
       --enable-pcre2-8 \
       --enable-pcre2-16 \
       --enable-pcre2-32 \
       --enable-newline-is-anycrlf \
       --enable-unicode \
-      --disable-pcre2grep-jit \
+      --enable-pcre2grep-jit \
       --enable-pcre2grep-libbz2 \
       --enable-pcre2grep-libz \
       --disable-pcre2test-libedit \
@@ -92,7 +95,7 @@ package_libpcre2posix() {
   groups=('libraries')
 
   mkdir -p ${pkgdir}/usr/bin
-  cp -f ${srcdir}/dest/usr/bin/*pcre2-posix-2.dll ${pkgdir}/usr/bin/
+  cp -f ${srcdir}/dest/usr/bin/*pcre2-posix-[0-9]*.dll ${pkgdir}/usr/bin/
 }
 
 package_pcre2-devel() {
