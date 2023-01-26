@@ -1,17 +1,18 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=vim
-_topver=8.1
-_patchlevel=0022
+_topver=8.2
+_patchlevel=5117
 _versiondir="${pkgname}${_topver//./}"
 pkgver=${_topver}.${_patchlevel}
-pkgrel=1
+pkgrel=2
 arch=('i686' 'x86_64')
 license=('custom:vim')
-url="http://www.vim.org"
-depends=('ncurses')
+url="https://www.vim.org"
+depends=('ncurses' 'libiconv' 'libintl')
 groups=('editors')
-makedepends=('gawk' 'perl' 'python2' 'python3' 'ruby' 'libiconv' 'ncurses-devel' 'libcrypt-devel')
+makedepends=('gawk' 'ncurses-devel' 'gcc'
+             'libiconv-devel' 'gettext-devel') # To satisfy python3/dyn feature #3052
 source=(${pkgname}-${pkgver}.tar.gz::https://github.com/vim/vim/archive/v${pkgver}.tar.gz
         'dot.vimrc'
         '7.3-cygwin-mouse.patch'
@@ -20,14 +21,20 @@ source=(${pkgname}-${pkgver}.tar.gz::https://github.com/vim/vim/archive/v${pkgve
         'pretend-cygwin-msys.patch'
         'accept-crlf.patch'
         'vim-completion')
-sha256sums=('28b5d850d4df455f41c457399a578b1da6cca2bcc79115498356aa0afd8ca460'
+sha256sums=('4d47aedd0b984f069ddf329c4a73a53b9b2c13b2806894fe3c2f47a98c6e6e8e'
             'edd18e0756406ee7b659e4552e444c50c3a0c1e9fb4fce2ddd770c933ea6c7f5'
             'bca6e030d50c0d2468ab5c78aa0b359eb18a88a197de8406c593458ffedde922'
             '44d7738a8f801195898eeef766ff77506c717dd5d19145ade3c1c2349d4bc4fd'
-            '0698234a2436f2d37f43775c9db5a2fc67d182f8baa46a8a0e2b7dd37da6fcbd'
+            'd60db82149b68c6e3bfc7f840191af3e5cbc8af46409ec3b752407689c44f35b'
             '5fcec194d2fcb2a624358d8ce074e8d97b873b5c2fff2118491b57a4880737d9'
-            'bfa0b1f29e83eadd161c570f28a1247e3dca6aa3d89d23abcb7e57dab7649a6d'
+            'b98b4807d6c2011836191bddce1e28b22c44649e7059af646d25187d13eea549'
             'bdca6069ef0fa995718f4b59fea85e58629259bb5a385d53e52d162d1463d4ff')
+if [ "${CARCH}" == 'x86_64' ]; then
+       # Git for Windows' i686-bit SDK does not have the `autotools` package
+       makedepends+=('perl-devel' 'python-devel' 'ruby' 'autotools')
+elif [ "${CARCH}" == 'i686' ]; then
+       makedepends+=('libcrypt-devel')
+fi
 
 prepare() {
   cd ${srcdir}/${pkgname}-${pkgver}
@@ -54,26 +61,6 @@ prepare() {
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
 
-  # ./configure \
-    # --prefix=/usr \
-    # --build=${CHOST} \
-    # --with-features=small \
-    # --with-tlib=ncursesw \
-    # --enable-multibyte \
-    # --disable-luainterp \
-    # --disable-perlinterp \
-    # --disable-pythoninterp \
-    # --disable-python3interp \
-    # --disable-rubyinterp \
-    # --disable-tclinterp \
-    # --disable-gpm --disable-sysmouse \
-    # --disable-gui --without-x \
-    # --with-compiledby="<alexpux@gmail.com>"
-  # make auto/osdef.h
-  # make VIMRCLOC=/etc VIMRUNTIMEDIR=/usr/share/vim/vim${slot/\.} || die "make 2 fail"
-  # mv vim.exe vi.exe
-  # make distclean
-
   ./configure \
     --prefix=/usr \
     --build=${CHOST} \
@@ -83,14 +70,14 @@ build() {
     --enable-multibyte \
     --enable-luainterp=dynamic \
     --enable-perlinterp=dynamic \
-    --enable-pythoninterp=dynamic \
+    --enable-pythoninterp=no \
     --enable-python3interp=dynamic \
     --enable-rubyinterp=dynamic \
     --disable-tclinterp \
     --disable-gpm --disable-sysmouse \
     --disable-gui --without-x \
     CPPFLAGS="${CPPFLAGS} -I/usr/include/ncursesw" \
-    --with-compiledby="<alexpux@gmail.com>"
+    --with-compiledby="<https://www.msys2.org/>"
 
   #make auto/osdef.h
   make -j1 VIMRCLOC=/etc VIMRUNTIMEDIR=/usr/share/vim/vim${_topver/\.}
@@ -146,10 +133,6 @@ package() {
 
   # rc files
   install -Dm644 "${srcdir}"/dot.vimrc "${pkgdir}"/etc/skel/.vimrc
-
-  # rgb.txt file
-  install -Dm644 "${srcdir}"/vim-${pkgver}/runtime/rgb.txt \
-    "${pkgdir}"/usr/share/vim/${_versiondir}/rgb.txt
 
   # license
   install -Dm644 "${srcdir}"/vim-${pkgver}/runtime/doc/uganda.txt \
