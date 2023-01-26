@@ -1,55 +1,46 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=nano
-pkgver=2.9.8
+pkgver=7.2
 pkgrel=1
 pkgdesc="Pico editor clone with enhancements"
 arch=('i686' 'x86_64')
-license=('GPL')
+license=('spdx:GPL-3.0-or-later')
 url="https://www.nano-editor.org"
 groups=('editors')
 depends=('file' 'libintl' 'ncurses' 'sh')
-makedepends=('make'
-             'automake-wrapper'
+makedepends=('gcc'
              'ncurses-devel'
              'libiconv-devel'
              'gettext-devel')
 backup=('etc/nanorc')
-install=nano.install
-source=(https://www.nano-editor.org/dist/v${pkgver%.*}/${pkgname}-${pkgver}.tar.xz{,.asc}
-        2.2.4-wchar.patch
-        nano-2.3.4-fix-ncurses-location.patch
-        nano-2.8.0-msys2.patch)
-sha256sums=('c2deac31ba4d3fd27a42fafcc47ccf499296cc69a422bbecab63f2933ea85488'
-            'SKIP'
-            '60ea17cdaf6ce0dbcf7e21b592e54aa829b34d9aab95a7ad20ddce569605c3d4'
-            '62b0e50470254ed09e55c068b29b72fe784d0552f97fbc5a15b6ee791c9cbd72'
-            '6f125a7cfcc956d57fae4e1be765666c86804bee806bb8c32b092d98310e6e32')
-validpgpkeys=('8DA6FE7BFA7A418AB3CB2354BCB356DF91009FA7' # "Chris Allegretta <chrisa@asty.org>"
-              'A7F6A64A67DA09EF92782DD79DF4862AF1175C5B' # "Benno Schulenberg <bensberg@justemail.net>"
+source=(https://www.nano-editor.org/dist/v7/${pkgname}-${pkgver}.tar.xz{,.asc})
+sha256sums=('86f3442768bd2873cec693f83cdf80b4b444ad3cc14760b74361474fc87a4526'
+            'SKIP')
+validpgpkeys=(
+  '168E6F4297BFD7A79AFD4496514BBE2EB8E1961F' # Benno Schulenberg <bensberg@telfort.nl>
 )
+if [ "${CARCH}" == 'x86_64' ]; then
+       # Git for Windows' i686-bit SDK does not have the `autotools` package
+       makedepends+=('autotools')
+fi
 
 prepare() {
   cd ${srcdir}/${pkgname}-${pkgver}
-  msg2 "2.2.4-wchar.patch"
-  patch -p2 -i ${srcdir}/2.2.4-wchar.patch
-  msg2 "nano-2.3.4-fix-ncurses-location.patch"
-  patch -p1 -i ${srcdir}/nano-2.3.4-fix-ncurses-location.patch
-  msg2 "nano-2.8.0-msys2.patch"
-  patch -p1 -i ${srcdir}/nano-2.8.0-msys2.patch
+
+  autoreconf -fiv
 }
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
-  ./configure --build=${CHOST} \
+
+  local CYGWIN_CHOST="${CHOST/-msys/-cygwin}"
+  ./configure --build=${CYGWIN_CHOST} \
     --prefix=/usr \
     --sysconfdir=/etc \
     --enable-color \
-    --without-slang \
     --enable-nanorc \
-    --enable-utf8 \
-    CFLAGS="${CFLAGS} -I/usr/include/ncursesw" \
-    CPPFLAGS="${CPPFLAGS} -I/usr/include/ncursesw"
+    --enable-utf8
 
   make
 }

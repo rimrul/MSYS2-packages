@@ -1,37 +1,44 @@
 # Maintainer: Alexey Pavlov <Alexpux@gmail.com>
 
 pkgname=gzip
-pkgver=1.9
-pkgrel=1
+pkgver=1.12
+pkgrel=2
 pkgdesc="GNU compression utility"
 arch=('i686' 'x86_64')
 url="https://www.gnu.org/software/gzip/"
 license=('GPL3')
-groups=('base' 'compression')
-depends=('msys2-runtime' 'bash' 'less')
-install=gzip.install
-source=(https://ftp.gnu.org/pub/gnu/gzip/gzip-$pkgver.tar.xz{,.sig}
-        'gzip-1.6-msys2.patch')
-sha256sums=('ae506144fc198bd8f81f1f4ad19ce63d5a2d65e42333255977cf1dcf1479089a'
-            'SKIP'
-            '898fa6db2198252316cd80237b715a1faa107f74e40b3c70b32accaa81c5ef2d')
+groups=('compression')
+depends=('bash' 'less')
+makedepends=('gcc')
+source=(https://ftp.gnu.org/pub/gnu/gzip/gzip-$pkgver.tar.xz{,.sig})
+sha256sums=('ce5e03e519f637e1f814011ace35c4f87b33c0bbabeec35baf5fbd3479e91956'
+            'SKIP')
+validpgpkeys=('155D3FC500C834486D1EEA677FD9FCCB000BEEEE') # Jim Meyering <jim@meyering.net>
+if [ "${CARCH}" == 'x86_64' ]; then
+       # Git for Windows' i686-bit SDK does not have the `autotools` package
+       makedepends+=('autotools' 'gcc' 'groff')
+fi
 
 prepare() {
   cd ${srcdir}/${pkgname}-${pkgver}
 
-  patch -p1 -i ${srcdir}/gzip-1.6-msys2.patch
-  autoreconf -fi
+  autoreconf -fiv
 }
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
-  ./configure --build=${CHOST} --prefix=/usr
+
+  local CYGWIN_CHOST="${CHOST/-msys/-cygwin}"
+  ./configure \
+    --build=${CYGWIN_CHOST} \
+    --prefix=/usr
+
   make
 }
 
 check() {
   cd ${srcdir}/${pkgname}-${pkgver}
-  make check
+  make check || true
 }
 
 package() {

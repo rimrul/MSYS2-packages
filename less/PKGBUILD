@@ -1,23 +1,32 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=less
-pkgver=590
+pkgver=621
 pkgrel=1
 pkgdesc="A terminal based program for viewing text files"
 license=('GPL3')
 arch=('i686' 'x86_64')
 url="http://www.greenwoodsoftware.com/less"
-depends=('ncurses' 'libpcre')
-makedepends=('ncurses-devel' 'pcre-devel')
-source=("http://www.greenwoodsoftware.com/${pkgname}/${pkgname}-${pkgver}.tar.gz")
-# pgp check still fails with FAILED (unknown public key F153A7C833235259)
-#        "$pkgname-$pkgver.tar.gz.sig::http://www.greenwoodsoftware.com/$pkgname/$pkgname-$pkgver.sig")
-sha256sums=('6aadf54be8bf57d0e2999a3c5d67b1de63808bb90deb8f77b028eafae3a08e10')
-#            'SKIP')
+depends=('ncurses' 'libpcre2_8')
+makedepends=('ncurses-devel' 'pcre2-devel')
+source=("https://github.com/gwsw//${pkgname}/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('88920b41585dc3702a69064f498e599c209eda5b2d820e40d372a625b984dd83')
 validpgpkeys=('AE27252BD6846E7D6EAE1DD6F153A7C833235259') # Mark Nudelman
+if [ "${CARCH}" == 'x86_64' ]; then
+       # Git for Windows' i686-bit SDK does not have the `autotools` package
+       makedepends+=('autotools' 'gcc' 'groff')
+fi
+
+prepare() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+
+  autoreconf -vfi
+}
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
+  make -f Makefile.aut distfiles
+
   ./configure \
       --build=${CHOST} \
       --prefix=/usr \
