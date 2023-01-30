@@ -31,7 +31,7 @@ build() {
       --build=${CHOST} \
       --prefix=/usr \
       --sysconfdir=/etc \
-      --with-regex=pcre
+      --with-regex=pcre2
   make
 }
 
