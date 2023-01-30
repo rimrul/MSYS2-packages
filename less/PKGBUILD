@@ -10,7 +10,7 @@ url="http://www.greenwoodsoftware.com/less"
 depends=('ncurses' 'libpcre2_8')
 makedepends=('ncurses-devel' 'pcre2-devel')
 source=("https://github.com/gwsw//${pkgname}/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('88920b41585dc3702a69064f498e599c209eda5b2d820e40d372a625b984dd83')
+sha256sums=('cfcc4537e8bbabe0783ccf53a302b7341547bc98be5d8c8771616768aeca30de')
 validpgpkeys=('AE27252BD6846E7D6EAE1DD6F153A7C833235259') # Mark Nudelman
 if [ "${CARCH}" == 'x86_64' ]; then
        # Git for Windows' i686-bit SDK does not have the `autotools` package
