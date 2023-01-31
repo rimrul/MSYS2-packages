@@ -24,7 +24,7 @@ makedepends=('cocom'
              'libiconv-devel'
              'diffutils')
 # options=('debug' '!strip')
-source=('msys2-runtime'::git://sourceware.org/git/newlib-cygwin.git#tag=cygwin-${pkgver//./_}-release
+source=('msys2-runtime'::git+https://github.com/cygwin/cygwin#tag=cygwin-${pkgver//./_}-release
         0001-Add-MSYS2-triplet.patch
         0002-Fix-msys-library-name-in-import-libraries.patch
         0003-Rename-dll-from-cygwin-to-msys.patch
