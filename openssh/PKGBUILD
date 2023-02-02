@@ -10,7 +10,7 @@ arch=('i686' 'x86_64')
 groups=('net-utils')
 depends=('libfido2' 'heimdal' 'libedit' 'libcrypt' 'openssl')
 makedepends=('libfido2-devel' 'libcbor-devel' 'heimdal-devel' 'libedit-devel' 'libcrypt-devel' 'openssl-devel')
-source=("https://cloudflare.cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/${pkgname}-${pkgver}.tar.gz"{,.asc}
+source=("https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/${pkgname}-${pkgver}.tar.gz"{,.asc}
         0001-Forward-port-MSys2-patches.patch
         0002-openssh-work-around-Cygwin-declaring-setkey.patch
         0003-openssh-skip-privilege-separation-tests.patch
