@@ -1,4 +1,4 @@
-From 62c590e72f72c297cee821c1743e44f439ad661e Mon Sep 17 00:00:00 2001
+From d32c034630efae2b3b629e1c880664a26745eefe Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Mon, 22 Aug 2016 17:09:20 +0200
 Subject: [PATCH 2/4] openssh: work around Cygwin declaring setkey
@@ -30,5 +30,5 @@ index 6d17ef6d..dbddb926 100644
  #include <sys/socket.h> /* For CMSG_* */
  
 -- 
-2.38.0.windows.1
+2.39.1
 
