@@ -32,6 +32,7 @@ git -c core.abbrev=7 \
 	-c format.useAutoBase=false \
 	-C src/msys2-runtime \
 	format-patch \
+		--no-signature \
 		--topo-order \
 		--diff-algorithm=default \
 		--no-attach \
@@ -40,9 +41,9 @@ git -c core.abbrev=7 \
 		--no-thread \
 		--suffix=.patch \
 		--subject-prefix=PATCH \
-		--signature=2.9.0 \
 		--output-directory ../.. \
-			$base_tag.. ${merging_rebase_start:+^$merging_rebase_start} ||
+		$base_tag.. ${merging_rebase_start:+^$merging_rebase_start} \
+		-- ':(exclude).github/' ||
 die "Could not generate new patch set"
 
 patches="$(ls 0*.patch)" &&
@@ -63,8 +64,25 @@ sed -i -e "/^        0.*\.patch$/{:1;N;/[^)]$/b1;s|.*|$in_sources)|}" \
 	PKGBUILD ||
 die "Could not update the patch set in PKGBUILD"
 
+if git rev-parse --verify HEAD >/dev/null &&
+	git update-index -q --ignore-submodules --refresh &&
+	git diff-files --quiet --ignore-submodules &&
+	git diff-index --cached --quiet --ignore-submodules HEAD --
+then
+	echo "Already up to date!" >&2
+	exit 0
+fi
+
 updpkgsums ||
 die "Could not update the patch set checksums in PKGBUILD"
+
+# bump pkgrel
+if ! git diff @{u} -- PKGBUILD | grep -q '^+pkgver'
+then
+	pkgrel=$((1+$(sed -n -e 's/^pkgrel=//p' <PKGBUILD))) &&
+	sed -i -e "s/^\(pkgrel=\).*/\1$pkgrel/" PKGBUILD ||
+	die "Could not increment pkgrel"
+fi
 
 git add PKGBUILD ||
 die "Could not stage updates in PKGBUILD"
