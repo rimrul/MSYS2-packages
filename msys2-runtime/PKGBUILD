@@ -4,7 +4,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgver=3.3.6
-pkgrel=3
+pkgrel=4
 pkgdesc="Cygwin POSIX emulation engine"
 arch=('i686' 'x86_64')
 url="https://www.cygwin.com/"
@@ -25,6 +25,7 @@ makedepends=('cocom'
              'diffutils')
 # options=('debug' '!strip')
 source=('msys2-runtime'::git+https://github.com/cygwin/cygwin#tag=cygwin-${pkgver//./_}-release
+        msys2-runtime.commit
         0001-Add-MSYS2-triplet.patch
         0002-Fix-msys-library-name-in-import-libraries.patch
         0003-Rename-dll-from-cygwin-to-msys.patch
@@ -85,8 +86,11 @@ source=('msys2-runtime'::git+https://github.com/cygwin/cygwin#tag=cygwin-${pkgve
         0058-Change-the-default-base-address-for-x86_64.patch
         0059-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
         0060-dumper-avoid-linker-problem-when-libbfd-depends-on-l.patch
-        0061-Cygwin-console-Fix-hangup-of-less-on-quit-after-the-.patch)
+        0061-Cygwin-console-Fix-hangup-of-less-on-quit-after-the-.patch
+        0062-amend-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
+        0063-uname-report-msys2-runtime-commit-hash-too.patch)
 sha256sums=('SKIP'
+            'aff4697966936746e34f3e99132df62a4b4df7d9a424d29c309262324d129930'
             'c375315e58181ee5589b7966101aa095de3f864a579c3c3f0f0683595d4e428d'
             '01ea2b131cf5a3b27fdbc458019eac14e45a36782ce3ce33e62328eefcd2d02e'
             '475ddea4d86605ab097f98ec764951a9d647ea3100dea0e1620f57044ea4a114'
@@ -147,7 +151,9 @@ sha256sums=('SKIP'
             'd6e806768bc623a01cc29f7a47feb6da91b7bbdb49f8908a9ad2748c1ac41955'
             '865bcaa5dc7275a79d732241c7e61c4c22cda537d1764227b96c9dd89a623593'
             '6abfae0da52df37dcbde6eca92d66e5abd8a4e5460efc36fd7ce593fd9c9bad3'
-            '433685c3c366f0aa077d1230f027ed9314e7f0b1e91d4e98e6bfbaa92ed18f89')
+            '433685c3c366f0aa077d1230f027ed9314e7f0b1e91d4e98e6bfbaa92ed18f89'
+            '4b55c8fd81bdf4c552433e79fe24db7e1289ed3b99cd9c4d1272f1336b1a8b4b'
+            '7865ca781926f104a15fd659432b6b72462f54125c351122195b2314c6c74cf3')
 
 # Helper macro to help make tasks easier #
 del_file_exists() {
@@ -235,6 +241,8 @@ prepare() {
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0059-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0060-dumper-avoid-linker-problem-when-libbfd-depends-on-l.patch
   git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0061-Cygwin-console-Fix-hangup-of-less-on-quit-after-the-.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0062-amend-Avoid-sharing-cygheaps-across-Cygwin-versions.patch
+  git am --committer-date-is-author-date --ignore-space-change "${srcdir}"/0063-uname-report-msys2-runtime-commit-hash-too.patch
 }
 
 build() {
@@ -257,6 +265,7 @@ build() {
   (cd "${srcdir}/msys2-runtime/winsup" && ./autogen.sh)
 
   "${srcdir}"/msys2-runtime/configure \
+    --with-msys2-runtime-commit="$(cat "${srcdir}/msys2-runtime.commit")" \
     --prefix=/usr \
     --build=${CHOST} \
     --sysconfdir=/etc \
