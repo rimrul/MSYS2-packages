@@ -12,23 +12,23 @@ depends=('libgpg-error')
 makedepends=('libgpg-error-devel')
 options=('!emptydirs')
 source=(https://gnupg.org/ftp/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2
-        libgcrypt-1.7.3-ecc-test-fix.patch
-        libgcrypt-1.8.0-use-poll.patch
-        libgcrypt-1.6.1-msys2.patch
-        fix-broken-mlock-detection.patch)
+        0001-libgcrypt-1.7.3-ecc-test-fix.patch
+        0002-libgcrypt-1.8.0-use-poll.patch
+        0003-libgcrypt-1.6.1-msys2.patch
+        0004-fix-broken-mlock-detection.patch)
 sha256sums=('97ebe4f94e2f7e35b752194ce15a0f3c66324e0ff6af26659bbfb5ff2ec328fd'
-            '3a420cc2b238203b1d107bb20313bfdaa79f8a1358678a2f222093223132038c'
-            'ffa8d8dcb6193ff85f8f978625f24e589985dbe22e1858af9b52cd141a76052f'
-            '3339e6d9e3e1558eaff05c7adf6f0d3660590e84c3e9b5645543d464233ee270'
-            '21b64825594419ee1eaa7c0e680cc5c7ecb73671611e1d7c1db5cb4bf146d29e')
+            '13d650b9383b728e8e8e5e0cd94121b8718018d56aff1d605d6180a367b5395c'
+            'ae324a1661907adc38e158fb43e9de99036f539bc0ce57434b60bfb841a1f10e'
+            '4b496b2bbc592a8549cde869938ab7d99894622cb12746b930a6315aec336821'
+            '33deefac521eee218b844d4f575a78737f34a32c67a4cf30fc37f6da0ea11e47')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  patch -p1 -i ${srcdir}/libgcrypt-1.7.3-ecc-test-fix.patch
-  patch -p1 -i ${srcdir}/libgcrypt-1.8.0-use-poll.patch
-  patch -p1 -i ${srcdir}/libgcrypt-1.6.1-msys2.patch
-  patch -p1 -i ${srcdir}/fix-broken-mlock-detection.patch
+  patch -p1 -i ${srcdir}/0001-libgcrypt-1.7.3-ecc-test-fix.patch
+  patch -p1 -i ${srcdir}/0002-libgcrypt-1.8.0-use-poll.patch
+  patch -p1 -i ${srcdir}/0003-libgcrypt-1.6.1-msys2.patch
+  patch -p1 -i ${srcdir}/0004-fix-broken-mlock-detection.patch
 
   autoreconf -fi
 }

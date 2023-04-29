@@ -1,7 +1,7 @@
-From 709e55f11d7748977063a1ea9cd082777321feb5 Mon Sep 17 00:00:00 2001
+From 1124401a2f3bdee62aaf277d11faac2c54222769 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Tue, 15 Jun 2021 14:52:20 +0200
-Subject: [PATCH] Fix broken mlock detection
+Subject: [PATCH 4/4] Fix broken mlock detection
 
 We need to be careful when casting a pointer to a `long int`: the
 highest bit might be set, in which case the result is a negative number.
@@ -28,7 +28,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/acinclude.m4 b/acinclude.m4
-index 3c8dfba..4a2a83c 100644
+index 3c8dfba7..4a2a83c0 100644
 --- a/acinclude.m4
 +++ b/acinclude.m4
 @@ -236,7 +236,7 @@ int main()
@@ -41,7 +41,7 @@ index 3c8dfba..4a2a83c 100644
      err = mlock( pool, 4096 );
      if( !err || errno == EPERM || errno == EAGAIN)
 diff --git a/configure b/configure
-index 4722cfb..68b08ee 100755
+index 4722cfbc..68b08ee9 100755
 --- a/configure
 +++ b/configure
 @@ -18028,7 +18028,7 @@ int main()
@@ -53,6 +53,3 @@ index 4722cfb..68b08ee 100755
  
      err = mlock( pool, 4096 );
      if( !err || errno == EPERM || errno == EAGAIN)
--- 
-2.26.2
-

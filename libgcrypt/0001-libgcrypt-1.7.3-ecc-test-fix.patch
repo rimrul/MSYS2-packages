@@ -1,7 +1,18 @@
-diff -up libgcrypt-1.7.3/tests/benchmark.c.eccfix libgcrypt-1.7.3/tests/benchmark.c
---- libgcrypt-1.7.3/tests/benchmark.c.eccfix	2016-07-14 11:19:17.000000000 +0200
-+++ libgcrypt-1.7.3/tests/benchmark.c	2016-11-22 16:21:00.109004197 +0100
-@@ -1412,7 +1412,7 @@ ecc_bench (int iterations, int print_hea
+From c4048b5152e635c2a9dca9e816d95615e418e991 Mon Sep 17 00:00:00 2001
+From: Alexey Pavlov <alexpux@gmail.com>
+Date: Fri, 14 Jul 2017 13:41:34 +0300
+Subject: [PATCH 1/4] libgcrypt-1.7.3-ecc-test-fix
+
+---
+ tests/benchmark.c   |  2 +-
+ tests/dsa-rfc6979.c | 93 ---------------------------------------------
+ 2 files changed, 1 insertion(+), 94 deletions(-)
+
+diff --git a/tests/benchmark.c b/tests/benchmark.c
+index 5963527e..0625c7d1 100644
+--- a/tests/benchmark.c
++++ b/tests/benchmark.c
+@@ -1475,7 +1475,7 @@ ecc_bench (int iterations, int print_header)
  {
  #if USE_ECC
    gpg_error_t err;
@@ -10,13 +21,15 @@ diff -up libgcrypt-1.7.3/tests/benchmark.c.eccfix libgcrypt-1.7.3/tests/benchmar
                "gost256", "gost512" };
    int testno;
  
-diff -up libgcrypt-1.7.3/tests/dsa-rfc6979.c.eccfix libgcrypt-1.7.3/tests/dsa-rfc6979.c
---- libgcrypt-1.7.3/tests/dsa-rfc6979.c.eccfix	2016-02-18 09:38:03.000000000 +0100
-+++ libgcrypt-1.7.3/tests/dsa-rfc6979.c	2016-11-22 16:22:11.804674008 +0100
-@@ -210,16 +210,6 @@ check_dsa_rfc6979 (void)
+diff --git a/tests/dsa-rfc6979.c b/tests/dsa-rfc6979.c
+index 7d3d2080..9f2b9d6d 100644
+--- a/tests/dsa-rfc6979.c
++++ b/tests/dsa-rfc6979.c
+@@ -164,16 +164,6 @@ check_dsa_rfc6979 (void)
+       "     74E04299F132026601638CB87AB79190D4A0986315DA8EEC6561C938996BEADF#)"
        " ))"
      },
-     {
+-    {
 -      "ECDSA, 192 bits (prime field)",
 -      "(private-key"
 -      " (ecdsa"
@@ -26,14 +39,14 @@ diff -up libgcrypt-1.7.3/tests/dsa-rfc6979.c.eccfix libgcrypt-1.7.3/tests/dsa-rf
 -      " (d #6FAB034934E4C0FC9AE67F5B5659A9D7D1FEFD187EE09FD4#)"
 -      " ))"
 -    },
--    {
+     {
        "ECDSA, 224 bits (prime field)",
        "(private-key"
-       " (ecdsa"
-@@ -443,89 +433,6 @@ check_dsa_rfc6979 (void)
+@@ -397,89 +387,6 @@ check_dsa_rfc6979 (void)
+       "89EC4BB1400ECCFF8E7D9AA515CD1DE7803F2DAFF09693EE7FD1353E90A68307",
        "C9F0BDABCC0D880BB137A994CC7F3980CE91CC10FAF529FC46565B15CEA854E1"
      },
-     {
+-    {
 -      "ECDSA, 192 bits (prime field)",
 -      "With SHA-1, message = \"sample\"",
 -      "sha1", "sample",
@@ -116,7 +129,6 @@ diff -up libgcrypt-1.7.3/tests/dsa-rfc6979.c.eccfix libgcrypt-1.7.3/tests/dsa-rf
 -
 -
 -
--    {
+     {
        "ECDSA, 224 bits (prime field)",
        "With SHA-1, message = \"sample\"",
-       "sha1", "sample",
