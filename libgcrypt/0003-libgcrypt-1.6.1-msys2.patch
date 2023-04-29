@@ -1,7 +1,7 @@
-From 5c3cfbd9ba47f4f44e02094fcdef6a9af803827f Mon Sep 17 00:00:00 2001
+From 7f2af1719c83565da322d6e0bffaf8a08114101f Mon Sep 17 00:00:00 2001
 From: Alexey Pavlov <alexpux@gmail.com>
 Date: Sat, 1 Feb 2014 19:26:23 +0400
-Subject: [PATCH 3/4] libgcrypt-1.6.1-msys2
+Subject: [PATCH 3/3] libgcrypt-1.6.1-msys2
 
 ---
  build-aux/config.guess |  6 ++++++
@@ -303,7 +303,7 @@ index 859599aa..1241ae7c 100644
  	      if test "x$bindir" != x ;
  	      then
 diff --git a/configure.ac b/configure.ac
-index 904f8d1f..fe9d26a7 100644
+index 01900782..7af0f655 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -2275,7 +2275,7 @@ if test "$random" = "default"; then

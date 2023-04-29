@@ -2,8 +2,8 @@
 
 pkgbase=libgcrypt
 pkgname=('libgcrypt' 'libgcrypt-devel')
-pkgver=1.9.3
-pkgrel=2
+pkgver=1.9.4
+pkgrel=1
 pkgdesc="General purpose cryptographic library based on the code from GnuPG"
 arch=(i686 x86_64)
 url="https://gnupg.org"
@@ -14,13 +14,11 @@ options=('!emptydirs')
 source=(https://gnupg.org/ftp/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2
         0001-libgcrypt-1.7.3-ecc-test-fix.patch
         0002-libgcrypt-1.8.0-use-poll.patch
-        0003-libgcrypt-1.6.1-msys2.patch
-        0004-fix-broken-mlock-detection.patch)
-sha256sums=('97ebe4f94e2f7e35b752194ce15a0f3c66324e0ff6af26659bbfb5ff2ec328fd'
-            '13d650b9383b728e8e8e5e0cd94121b8718018d56aff1d605d6180a367b5395c'
-            'ae324a1661907adc38e158fb43e9de99036f539bc0ce57434b60bfb841a1f10e'
-            '4b496b2bbc592a8549cde869938ab7d99894622cb12746b930a6315aec336821'
-            '33deefac521eee218b844d4f575a78737f34a32c67a4cf30fc37f6da0ea11e47')
+        0003-libgcrypt-1.6.1-msys2.patch)
+sha256sums=('ea849c83a72454e3ed4267697e8ca03390aee972ab421e7df69dfe42b65caaf7'
+            '020fa624e6b44606e568bb0c339ba8ac4989b8d457c6d6fb4c35e97b666bf6f9'
+            '48a4d9086645b3cd03ebd7f7446d99f3706dc7a45d4c744c4c7c8dd96875944b'
+            '180fccceae88d1f7f8b0275eb3d94d73f938dac42943489efd5e74969564262e')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
@@ -28,7 +26,6 @@ prepare() {
   patch -p1 -i ${srcdir}/0001-libgcrypt-1.7.3-ecc-test-fix.patch
   patch -p1 -i ${srcdir}/0002-libgcrypt-1.8.0-use-poll.patch
   patch -p1 -i ${srcdir}/0003-libgcrypt-1.6.1-msys2.patch
-  patch -p1 -i ${srcdir}/0004-fix-broken-mlock-detection.patch
 
   autoreconf -fi
 }

@@ -1,7 +1,7 @@
-From 8cd4bc25fd4b1c5a8a6a474617f3dd561cb1e225 Mon Sep 17 00:00:00 2001
+From 562606ffb81143c575131bc25b3b392a9cd16394 Mon Sep 17 00:00:00 2001
 From: Alexey Pavlov <alexpux@gmail.com>
 Date: Fri, 22 Jun 2018 09:33:00 +0300
-Subject: [PATCH 2/4] libgcrypt-1.8.0-use-poll
+Subject: [PATCH 2/3] libgcrypt-1.8.0-use-poll
 
 ---
  random/rndlinux.c | 51 +++++++++++++++++++----------------------------
