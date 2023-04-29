@@ -2,8 +2,8 @@
 
 pkgbase=libgpg-error
 pkgname=('libgpg-error' 'libgpg-error-devel') # 'gpg-error'
-pkgver=1.42
-pkgrel=2
+pkgver=1.47
+pkgrel=1
 pkgdesc="Support library for libgcrypt"
 arch=('i686' 'x86_64')
 url="https://gnupg.org"
@@ -11,34 +11,35 @@ license=('LGPL')
 depends=('sh' 'libiconv' 'libintl')
 makedepends=('libiconv-devel' 'gettext-devel')
 source=(https://gnupg.org/ftp/gcrypt/libgpg-error/${pkgname}-${pkgver}.tar.bz2{,.sig}
-        0001-libgpg-error-1.16-msys2.patch
+        0001-gnulib-weak.patch
         0002-gpg-error-static-linking.patch)
-sha256sums=('fc07e70f6c615f8c4f590a8e37a9b8dd2e2ca1e9408f8e60459c67452b925e23'
+sha256sums=('9e3c670966b96ecc746c28c2c419541e3bcb787d1a73930f5e5f5e1bcbbb9bdb'
             'SKIP'
-            '8dec30474cea126e47cb1a7bb79673dc35a82c3c71cefb53ba97c8ed149f5a25'
-            'c13ec823212564a4e1faebb0189f15755bea062fd16d35b644165b5e79c38dd1')
+            '99e1554866c069169db1b9f56d7354de6f5f1fae76031fe3a0ad452d85ad0669'
+            '8a606291fda1b21136f1586253526213354cf4f2d5decf767ea13eca87f17fdc')
 #These might be signed by any of these keys https://gnupg.org/signature_key.html
 validpgpkeys=('D8692123C4065DEA5E0F3AB5249B39D24F25E3B6'
               '031EC2536E580D8EA286A9F22071B08A33BD3F06'
               '5B80C5754298F0CB55D8ED6ABCEF7E294B092E28'
               '6DAA6E64A76D2840571B4902528897B826403ADA')
-options=(!makeflags)
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  patch -p1 -i ${srcdir}/0001-libgpg-error-1.16-msys2.patch
+  patch -p1 -i ${srcdir}/0001-gnulib-weak.patch
   patch -p1 -i ${srcdir}/0002-gpg-error-static-linking.patch
   autoreconf -fi
 }
 
 build() {
   cd "${srcdir}"/${pkgname}-${pkgver}
+  local CYGWIN_CHOST="${CHOST/-msys/-cygwin}"
   ./configure \
     --prefix=/usr \
-    --build=${CHOST} \
+    --build=${CYGWIN_CHOST} \
     --without-libiconv-prefix \
     --without-libintl-prefix \
+    --enable-install-gpg-error-config \
     --enable-shared \
     --enable-static
 
