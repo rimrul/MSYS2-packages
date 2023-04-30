@@ -1,7 +1,7 @@
 # Maintainer: Alexey Pavlov <Alexpux@gmail.com>
 
 pkgname=perl
-pkgver=5.36.0
+pkgver=5.36.1
 _gccver=11.3.0
 pkgrel=1
 pkgdesc="A highly capable, feature-rich programming language"
@@ -144,7 +144,7 @@ provides=('perl-Archive-Tar=2.40'
           'perl-version=0.9929')
 # Add your own provides here
 provides=(${provides[@]})
-sha256sums=('0f386dccbee8e26286404b2cca144e1005be65477979beb9b1ba272d4819bcf0'
+sha256sums=('bd91217ea8a8c8b81f21ebbb6cefdf0d13ae532013f944cdece2cd51aef4b6a7'
             '91bf8a45a3f04f51fe0eca146a71e278d41dbde19ba60dabc1e41c4639477c07'
             '478a52dc440d5ca324f4c95238b39cc8c90d5d7d8d5601fa085ffef79fea04f4'
             '11ce66bcf4803b0bf27179a32ce53f41bcdfa967c4c0d54ac103dbc4951d18a3'
