@@ -2,8 +2,8 @@
 
 pkgbase=libgpg-error
 pkgname=('libgpg-error' 'libgpg-error-devel') # 'gpg-error'
-pkgver=1.42
-pkgrel=2
+pkgver=1.47
+pkgrel=1
 pkgdesc="Support library for libgcrypt"
 arch=('i686' 'x86_64')
 url="https://gnupg.org"
@@ -11,34 +11,38 @@ license=('LGPL')
 depends=('sh' 'libiconv' 'libintl')
 makedepends=('libiconv-devel' 'gettext-devel')
 source=(https://gnupg.org/ftp/gcrypt/libgpg-error/${pkgname}-${pkgver}.tar.bz2{,.sig}
-        libgpg-error-1.16-msys2.patch
-        gpg-error-static-linking.patch)
-sha256sums=('fc07e70f6c615f8c4f590a8e37a9b8dd2e2ca1e9408f8e60459c67452b925e23'
+        0001-gnulib-weak.patch
+        0002-gpg-error-static-linking.patch
+        0003-argparse-avoid-passing-a-signed-parameter-to-isspace.patch)
+sha256sums=('9e3c670966b96ecc746c28c2c419541e3bcb787d1a73930f5e5f5e1bcbbb9bdb'
             'SKIP'
-            '9f24d6b26a9da60b14dba9ce8bb55110609ab5496ed969adfb07464c1393d678'
-            '9780e3e397b983ef52d5dae22d54c4453a47bddf04eafa2f874c75038e3485eb')
+            '8b716e8fb6ef7d4b9c5c730b5819556ed907cbb0b0a144062fa5f41a58d92da8'
+            'a04b60374178755c9db848c5e050cccd038b20dd7b0c3cab3e27fbbcd6382484'
+            '9c65ed282a93cae2bac88c8cda93cfc0cc8642d693910b1825984b8e5aba41e9')
 #These might be signed by any of these keys https://gnupg.org/signature_key.html
 validpgpkeys=('D8692123C4065DEA5E0F3AB5249B39D24F25E3B6'
               '031EC2536E580D8EA286A9F22071B08A33BD3F06'
               '5B80C5754298F0CB55D8ED6ABCEF7E294B092E28'
               '6DAA6E64A76D2840571B4902528897B826403ADA')
-options=(!makeflags)
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  patch -p1 -i ${srcdir}/libgpg-error-1.16-msys2.patch
-  patch -p1 -i ${srcdir}/gpg-error-static-linking.patch
+  patch -p1 -i ${srcdir}/0001-gnulib-weak.patch
+  patch -p1 -i ${srcdir}/0002-gpg-error-static-linking.patch
+  patch -p1 -i ${srcdir}/0003-argparse-avoid-passing-a-signed-parameter-to-isspace.patch
   autoreconf -fi
 }
 
 build() {
   cd "${srcdir}"/${pkgname}-${pkgver}
+  local CYGWIN_CHOST="${CHOST/-msys/-cygwin}"
   ./configure \
     --prefix=/usr \
-    --build=${CHOST} \
+    --build=${CYGWIN_CHOST} \
     --without-libiconv-prefix \
     --without-libintl-prefix \
+    --enable-install-gpg-error-config \
     --enable-shared \
     --enable-static
 
