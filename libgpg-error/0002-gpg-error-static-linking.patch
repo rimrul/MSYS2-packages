@@ -1,0 +1,21 @@
+From 19a5d5207771a9033c51877e304778b1c4fd89c0 Mon Sep 17 00:00:00 2001
+From: Alexpux <alexey.pawlow@gmail.com>
+Date: Fri, 22 May 2020 13:10:53 +0300
+Subject: [PATCH 2/2] gpg-error-static-linking
+
+---
+ src/gpg-error.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gpg-error.pc.in b/src/gpg-error.pc.in
+index 970bb6c..0759268 100644
+--- a/src/gpg-error.pc.in
++++ b/src/gpg-error.pc.in
+@@ -11,5 +11,5 @@ Description: GPG Runtime
+ Version: @PACKAGE_VERSION@
+ Cflags: @GPG_ERROR_CONFIG_CFLAGS@
+ Libs: @GPG_ERROR_CONFIG_LIBS@
+-Libs.private: @GPG_ERROR_CONFIG_LIBS_PRIVATE@
++Libs.private: @GPG_ERROR_CONFIG_LIBS_PRIVATE@ @LIBINTL@ @LIBICONV@
+ URL: https://www.gnupg.org/software/libgpg-error/index.html
+
