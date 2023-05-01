@@ -13,12 +13,12 @@ makedepends=('libiconv-devel' 'gettext-devel')
 source=(https://gnupg.org/ftp/gcrypt/libgpg-error/${pkgname}-${pkgver}.tar.bz2{,.sig}
         0001-gnulib-weak.patch
         0002-gpg-error-static-linking.patch
-        0003-argparse-avoid-passing-a-signed-parameter-to-isspace.patch)
+        0003-Avoid-passing-a-signed-parameter-to-isspace-and-frie.patch)
 sha256sums=('9e3c670966b96ecc746c28c2c419541e3bcb787d1a73930f5e5f5e1bcbbb9bdb'
             'SKIP'
             '8b716e8fb6ef7d4b9c5c730b5819556ed907cbb0b0a144062fa5f41a58d92da8'
             'a04b60374178755c9db848c5e050cccd038b20dd7b0c3cab3e27fbbcd6382484'
-            '9c65ed282a93cae2bac88c8cda93cfc0cc8642d693910b1825984b8e5aba41e9')
+            '3f23c42c424cdeb072769bf8748665da3155b5a172da08be22b641dd04827612')
 #These might be signed by any of these keys https://gnupg.org/signature_key.html
 validpgpkeys=('D8692123C4065DEA5E0F3AB5249B39D24F25E3B6'
               '031EC2536E580D8EA286A9F22071B08A33BD3F06'
@@ -30,7 +30,7 @@ prepare() {
 
   patch -p1 -i ${srcdir}/0001-gnulib-weak.patch
   patch -p1 -i ${srcdir}/0002-gpg-error-static-linking.patch
-  patch -p1 -i ${srcdir}/0003-argparse-avoid-passing-a-signed-parameter-to-isspace.patch
+  patch -p1 -i ${srcdir}/0003-Avoid-passing-a-signed-parameter-to-isspace-and-frie.patch
   autoreconf -fi
 }
 

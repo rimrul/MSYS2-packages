@@ -1,8 +1,8 @@
-From e19acaa56e27acaa9acdadff5f0a8fd0e3399c15 Mon Sep 17 00:00:00 2001
+From b67f56e4447c333317a1908472ea696502768e48 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Sun, 30 Apr 2023 12:51:32 +0200
-Subject: [PATCH 3/3] argparse: avoid passing a signed parameter to `isspace()`
- and friends
+Subject: [PATCH 3/3] Avoid passing a signed parameter to `isspace()` and
+ friends
 
 In Cygwin, the `isspace()` family of functions seem to be inline
 functions that directly access an array if the parameter is below a
@@ -19,9 +19,23 @@ Let's accommodate for that.
 
 Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
 ---
+ doc/yat2m.c    |  2 +-
  src/argparse.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
+diff --git a/doc/yat2m.c b/doc/yat2m.c
+index c2806e3..605e962 100644
+--- a/doc/yat2m.c
++++ b/doc/yat2m.c
+@@ -500,7 +500,7 @@ macro_set_p (const char *name)
+         break;
+   if (!m || !m->value || !*m->value)
+     return 0;
+-  if ((*m->value & 0x80) || !isdigit (*m->value))
++  if ((*m->value & 0x80) || !isdigit ((unsigned char)*m->value))
+     return 1; /* Not a digit but some other string.  */
+   return !!atoi (m->value);
+ }
 diff --git a/src/argparse.c b/src/argparse.c
 index 8651e00..394a908 100644
 --- a/src/argparse.c
