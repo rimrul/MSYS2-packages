@@ -1,6 +1,16 @@
-diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndlinux.c
---- libgcrypt-1.8.0/random/rndlinux.c.use-poll	2017-06-24 13:34:29.000000000 +0200
-+++ libgcrypt-1.8.0/random/rndlinux.c	2017-08-15 15:37:37.604629377 +0200
+From 562606ffb81143c575131bc25b3b392a9cd16394 Mon Sep 17 00:00:00 2001
+From: Alexey Pavlov <alexpux@gmail.com>
+Date: Fri, 22 Jun 2018 09:33:00 +0300
+Subject: [PATCH 2/3] libgcrypt-1.8.0-use-poll
+
+---
+ random/rndlinux.c | 51 +++++++++++++++++++----------------------------
+ 1 file changed, 20 insertions(+), 31 deletions(-)
+
+diff --git a/random/rndlinux.c b/random/rndlinux.c
+index c20c5d4c..443ba1ef 100644
+--- a/random/rndlinux.c
++++ b/random/rndlinux.c
 @@ -32,6 +32,7 @@
  #include <string.h>
  #include <unistd.h>
@@ -9,7 +19,7 @@ diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndli
  #if defined(__APPLE__) && defined(__MACH__)
  #include <Availability.h>
  #ifdef __MAC_10_11
-@@ -246,9 +247,8 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -249,9 +250,8 @@ _gcry_rndlinux_gather_random (void (*add)(const void*, size_t,
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -20,7 +30,7 @@ diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndli
  
        /* If we have a modern operating system, we first try to use the new
         * getentropy function.  That call guarantees that the kernel's
-@@ -307,36 +307,25 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -310,36 +310,25 @@ _gcry_rndlinux_gather_random (void (*add)(const void*, size_t,
            any_need_entropy = 1;
          }
  
