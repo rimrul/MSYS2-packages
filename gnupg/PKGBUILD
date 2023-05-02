@@ -1,7 +1,7 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 
 pkgname=gnupg
-pkgver=2.2.29
+pkgver=2.2.41
 pkgrel=1
 pkgdesc='Complete and free implementation of the OpenPGP standard'
 provides=('dirmngr' "gnupg2=${pkgver}")
@@ -49,14 +49,16 @@ source=("https://gnupg.org/ftp/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2"{,
         'gnupg-2.2.8-msys2.patch'
         '0001-gnupg-2.2.9-have-drive-letters.patch'
         '0003-scd-Fix-for-SCARD_IO_REQUEST-structure.patch')
-sha256sums=('39d07cdb4524818f9ebce49294931974af504519e6a7476c52e9d38fc0bd0cc9'
+sha256sums=('13f3291007a5e8546fcb7bc0c6610ce44aaa9b3995059d4f8145ba09fd5be3e1'
             'SKIP'
             'cb23f1a61fd213c25e85b6ba8afb190b7da14a8cfa59cc56ce82df941db8c3c9'
             'bf9d6675024fa21003f48fc706a5f80799362b7370db0a6de19be36cf73919a5'
             'fe8c17bf1ab486f275e270048242d891881f733eda399f4a0acea36033f77df3')
 validpgpkeys=('031EC2536E580D8EA286A9F22071B08A33BD3F06'
               'D8692123C4065DEA5E0F3AB5249B39D24F25E3B6'
-              '6DAA6E64A76D2840571B4902528897B826403ADA')
+              '6DAA6E64A76D2840571B4902528897B826403ADA'
+              'AC8E115BF73E2D8D47FA9908E98E9B2D19C6C8BD')
+
 install=${pkgname}.install
 
 prepare() {
